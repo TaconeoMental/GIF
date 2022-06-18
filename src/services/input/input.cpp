@@ -20,7 +20,7 @@ const uint8_t OGF_BUTTON_COUNT = sizeof(OGF_BUTTONS) / sizeof(InputButton);
 static void input_init(Input *input)
 {
     input->buttons = (InputButton *) pvPortMalloc(sizeof(OGF_BUTTONS));
-    memcpy(input->buttons, MINIGUI_BUTTONS, sizeof(OGF_BUTTONS));
+    memcpy(input->buttons, OGF_BUTTONS, sizeof(OGF_BUTTONS));
     //input->flags_event_group = xEventGroupCreate();
     input->analog_pin = BUTTON_ANALOG_PIN;
     input->event_queue = xQueueCreate(5, sizeof(InputKey));
@@ -67,7 +67,7 @@ void input_service(void *pvParams)
         analog_value = analogRead(input_g.analog_pin);
 
         found = false;
-        for (uint8_t i = 0; i < MINIGUI_BUTTON_COUNT; i++)
+        for (uint8_t i = 0; i < OGF_BUTTON_COUNT; i++)
         {
             button = input_g.buttons[i];
             if (acceptable_analog_value(analog_value, button.analog_value))

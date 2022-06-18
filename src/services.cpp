@@ -1,5 +1,7 @@
 #include "services.h"
 
+#include "mini_log.h"
+
 // Servicios
 extern void input_service_init();
 extern void input_service(void *p);
@@ -8,24 +10,23 @@ extern void gui_service_init();
 extern void gui_service(void *p);
 
 // Aplicaciones
-// extern void test_app_service(void *p);
+extern void test_app_service(void *p);
+void empty(){}
 
 const GuiService GuiServices[] =
 {
     {input_service_init, input_service, "InputService", 2048, 1},
-    {gui_service_init, gui_service, "GuiService", 2048, 1}
+    {gui_service_init, gui_service, "GuiService", 2048, 1},
 };
 
 // Primera aplicación siempre es la primera en ejecutarse
-/*
-const DionisService DionisApplications[] =
+const GuiService GuiApplications[] =
 {
     {NULL, test_app_service, "Test App", 1024, 1}
 };
-*/
 
 const uint8_t OGF_SERVICE_COUNT = sizeof(GuiServices) / sizeof(GuiService);
-//const uint8_t DIONIS_APPLICATION_COUNT = sizeof(DionisApplications) / sizeof(DionisService);
+const uint8_t OGF_APPLICATION_COUNT = sizeof(GuiApplications) / sizeof(GuiService);
 
 void services_start()
 {

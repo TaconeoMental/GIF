@@ -3,6 +3,7 @@
 
 #include "display.h"
 #include "theater.h"
+#include "play.h"
 
 // Pantalla
 #define GUI_DISPLAY_WIDTH 128
@@ -25,7 +26,6 @@
 struct Gui
 {
     Display *display;
-    Theater *theater;
 };
 
 #endif

@@ -1,6 +1,8 @@
 #ifndef MINI_LOG_CONF_H
 #define MINI_LOG_CONF_H
 
+#include <Arduino.h>
+
 #define LOGGER_VERBOSITY_LEVEL LoggerVLevelDebug
 #define LOGGER_USE_COLOUR
 #define SERIAL_BAUD 9600

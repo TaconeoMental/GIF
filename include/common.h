@@ -38,7 +38,7 @@
 #define assert_ptr(ptr) \
     do { \
         if (ptr == NULL) { \
-            MLOG_E("Null pointer!); \
+            MLOG_E("Null pointer!"); \
             exit(0);} \
     } while(0)
 
