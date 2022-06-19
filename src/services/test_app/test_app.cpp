@@ -1,42 +1,35 @@
 #include "test_app.h"
 
-void test_app_init(TestApp *test_app)
-{
-    test_app->theater = gui_get_theater(gui_g);
-    test_app->main_view = test_app_main_alloc();
-    test_app->second_view = test_app_second_alloc();
+#include "scripts/test_app_script.h"
+#include "services/gui/gui.h"
+#include "common.h"
 
+#include <freertos/FreeRTOS.h>
+
+extern Gui *gui_g;
+
+static TestApp *test_app_alloc()
+{
+    TestApp *test_app = (TestApp *) pvPortMalloc(sizeof(TestApp));
     test_app->play = play_alloc();
     play_set_context(test_app->play, test_app);
     play_set_script_handlers(test_app->play, &test_app_script_handlers);
-
-    play_add_view(test_app->play,
-            TestAppViewIdMain,
-            test_app_main_get_view(test_app->main_view));
-
-    play_add_view(test_app->play,
-            TestAppViewIdSecond,
-            test_app_second_get_view(test_app->second_view));
-
     play_next_scene(test_app->play, TestAppMain);
-}
 
+    return test_app;
+}
 
 void test_app_free(TestApp *test_app)
 {
-    free(test_app->main_view);
     play_free(test_app->play);
+    free(test_app);
 }
 
 void test_app_service(void *pvParams)
 {
-    TestApp *test_app;
-    test_app_init(test_app);
+    TestApp *test_app = test_app_alloc();
 
-    while (1)
-    {
-        // TODO
-    }
+    play_start(test_app->play);
 
     test_app_free(test_app);
 }

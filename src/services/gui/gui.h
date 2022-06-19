@@ -1,6 +1,9 @@
 #ifndef GUI_H
 #define GUI_H
 
+#include <freertos/FreeRTOS.h>
+#include <freertos/semphr.h>
+
 #include "display.h"
 #include "theater.h"
 #include "play.h"
@@ -21,11 +24,12 @@
 #define GUI_WINDOW_WIDTH GUI_DISPLAY_WIDTH
 #define GUI_WINDOW_HEIGHT (GUI_DISPLAY_HEIGHT - GUI_STATUS_BAR_HEIGHT)
 
-//#define GUI_SCENE_STACK_SIZE 5
-
 struct Gui
 {
     Display *display;
+    Theater *theater;
+    //SemaphoreHandle_t mutex;
 };
+Theater *gui_get_theater(Gui *gui);
 
 #endif

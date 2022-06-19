@@ -1,5 +1,7 @@
 #include "display.h"
 
+#include "common.h"
+
 #define u8g2p(display) (display->u8g2i)
 
 // Helper para alinear objetos

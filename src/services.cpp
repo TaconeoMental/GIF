@@ -3,30 +3,37 @@
 #include "mini_log.h"
 
 // Servicios
-extern void input_service_init();
 extern void input_service(void *p);
-
-extern void gui_service_init();
 extern void gui_service(void *p);
 
 // Aplicaciones
 extern void test_app_service(void *p);
-void empty(){}
 
 const GuiService GuiServices[] =
 {
-    {input_service_init, input_service, "InputService", 2048, 1},
-    {gui_service_init, gui_service, "GuiService", 2048, 1},
+    {input_service, "InputService", 2048, 1},
+    {gui_service, "GuiService", 2048, 1}
 };
 
 // Primera aplicación siempre es la primera en ejecutarse
 const GuiService GuiApplications[] =
 {
-    {NULL, test_app_service, "Test App", 1024, 1}
+    {test_app_service, "Test App", 2048, 1}
 };
 
 const uint8_t OGF_SERVICE_COUNT = sizeof(GuiServices) / sizeof(GuiService);
 const uint8_t OGF_APPLICATION_COUNT = sizeof(GuiApplications) / sizeof(GuiService);
+
+
+void gui_service_start(const GuiService *service)
+{
+        xTaskCreate(service->callback,
+                    service->name,
+                    service->stack_depth,
+                    NULL,
+                    service->priority,
+                    NULL);
+}
 
 void services_start()
 {
@@ -42,14 +49,9 @@ void services_start()
                service.stack_depth,
                service.priority);
 
-        service.init_function();
-
-        xTaskCreate(service.callback,
-                    service.name,
-                    service.stack_depth,
-                    NULL,
-                    service.priority,
-                    NULL);
+        gui_service_start(&service);
     }
+    vTaskDelay(pdMS_TO_TICKS(500));
+    gui_service_start(&GuiApplications[0]);
     MLOG_I("Services started succesfully");
 }

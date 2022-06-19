@@ -7,7 +7,7 @@
 
 #include "mini_log.h"
 
-Input input_g;
+Input *input_g;
 
 const InputButton OGF_BUTTONS[] =
 {
@@ -17,13 +17,15 @@ const InputButton OGF_BUTTONS[] =
 };
 const uint8_t OGF_BUTTON_COUNT = sizeof(OGF_BUTTONS) / sizeof(InputButton);
 
-static void input_init(Input *input)
+static Input *input_alloc()
 {
+    Input *input = (Input *) pvPortMalloc(sizeof(Input));
     input->buttons = (InputButton *) pvPortMalloc(sizeof(OGF_BUTTONS));
     memcpy(input->buttons, OGF_BUTTONS, sizeof(OGF_BUTTONS));
     //input->flags_event_group = xEventGroupCreate();
     input->analog_pin = BUTTON_ANALOG_PIN;
     input->event_queue = xQueueCreate(5, sizeof(InputKey));
+    return input;
 }
 
 // Esto perfectamente podría ser un atributo de InputButton...
@@ -47,13 +49,10 @@ static bool acceptable_analog_value(uint16_t read_a_value, uint16_t a_value)
            (read_a_value <= a_value + ANALOG_VALUE_MARGIN);
 }
 
-void input_service_init()
-{
-    input_init(&input_g);
-}
-
 void input_service(void *pvParams)
 {
+    input_g = input_alloc();
+
     uint16_t analog_value;
     InputButton button;
     InputKey last_key = InputKeyNotPressed;
@@ -64,12 +63,12 @@ void input_service(void *pvParams)
 
     while (1)
     {
-        analog_value = analogRead(input_g.analog_pin);
+        analog_value = analogRead(input_g->analog_pin);
 
         found = false;
         for (uint8_t i = 0; i < OGF_BUTTON_COUNT; i++)
         {
-            button = input_g.buttons[i];
+            button = input_g->buttons[i];
             if (acceptable_analog_value(analog_value, button.analog_value))
             {
                 found = true;
@@ -85,7 +84,7 @@ void input_service(void *pvParams)
                                        bitmask_from_key(button.key));
                     */
 
-                    BaseType_t xStatus = xQueueSendToBack(input_g.event_queue, &button.key, portMAX_DELAY);
+                    BaseType_t xStatus = xQueueSendToBack(input_g->event_queue, &button.key, portMAX_DELAY);
                     if (xStatus != pdPASS)
                     {
                         MLOG_W("Could not send %d to the queue", button.key);

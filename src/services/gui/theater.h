@@ -2,6 +2,7 @@
 #define GUI_THEATER_H
 
 #include "play.h"
+#include "display.h"
 #include "services/input/input.h"
 
 #define MAX_APPLICATION_COUNT 5
@@ -15,8 +16,10 @@ struct Theater
     Play *current_play;
 };
 
-void theater_init(Theater *theater);
+Theater *theater_alloc(Display *display);
 void theater_send_input(Theater *theater, InputKey key);
-void theater_start_play(Theater *theater, Play *play);
+void theater_push_play(Theater *theater, Play *play);
+
+Play *theater_get_current_play(Theater *theater);
 
 #endif

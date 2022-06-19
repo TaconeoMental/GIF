@@ -1,30 +1,29 @@
 #include "theater.h"
 
 #include "mini_log.h"
+#include "common.h"
 
-void theater_init(Theater *theater)
+Theater *theater_alloc(Display *display)
 {
-    assert_ptr(theater);
-    // TODO: Init con una vista vacía
+    Theater *theater = (Theater *) pvPortMalloc(sizeof(Theater));
+    theater->play_count = 0;
+    theater->display = display;
+    return theater;
 }
 
 void theater_send_input(Theater *theater, InputKey key)
 {
     assert_ptr(theater);
-
-    //theater->current_view->input_callback();
     play_send_input(theater->current_play, key);
 }
 
-/*
-void theater_draw(Theater *theater)
+Play *theater_get_current_play(Theater *theater)
 {
     assert_ptr(theater);
-    theater->current_play
+    return  theater->current_play;
 }
-*/
 
-void theater_start_play(Theater *theater, Play *play)
+void theater_push_play(Theater *theater, Play *play)
 {
     assert_ptr(theater);
     assert_ptr(play);
@@ -36,5 +35,4 @@ void theater_start_play(Theater *theater, Play *play)
     }
     theater->plays[theater->play_count++] = play;
     theater->current_play = play;
-    play_enter_scene(play);
 }

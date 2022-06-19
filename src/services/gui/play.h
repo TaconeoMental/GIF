@@ -1,6 +1,9 @@
 #ifndef GUI_PLAY_H
 #define GUI_PLAY_H
 
+#include <freertos/FreeRTOS.h>
+#include <freertos/queue.h>
+
 #include "display.h"
 #include "services/input/input.h"
 
@@ -20,10 +23,12 @@ struct ScriptHandlers
 
 struct Play
 {
-    ScriptHandlers *script;
+    const ScriptHandlers *script;
 
     uint8_t current_scene_id;
     uint8_t next_scene_id;
+
+    QueueHandle_t event_queue;
 
     void *context;
 };
@@ -32,12 +37,13 @@ Play *play_alloc();
 void play_free(Play *play);
 
 void play_set_context(Play *play, void *context);
-void play_set_script_handlers(Play *play, ScriptHandlers *handlers);
+void play_set_script_handlers(Play *play, const ScriptHandlers *handlers);
 
 void play_next_scene(Play *play, uint8_t scene_id);
 void play_enter_scene(Play *play);
 void play_switch_to_scene(Play *play, uint8_t scene_id);
 void play_send_input(Play *play, InputKey key);
 void play_draw(Play *play, Display *display);
+void play_start(Play *play);
 
 #endif

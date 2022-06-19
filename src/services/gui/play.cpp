@@ -4,8 +4,9 @@
 
 Play *play_alloc()
 {
-    Play *play = (Play*)malloc(sizeof(Play));
+    Play *play = (Play *) pvPortMalloc(sizeof(Play));
     play->current_scene_id = 0;
+    play->event_queue = xQueueCreate(5, sizeof(InputKey));
     return play;
 }
 
@@ -22,7 +23,7 @@ void play_set_context(Play *play, void *context)
     play->context = context;
 }
 
-void play_set_script_handlers(Play *play, ScriptHandlers *handlers)
+void play_set_script_handlers(Play *play, const ScriptHandlers *handlers)
 {
     assert_ptr(play);
     assert_ptr(handlers);
@@ -71,4 +72,21 @@ void play_draw(Play *play, Display *display)
 {
     assert_ptr(play);
     play->script->draw_callbacks[play->current_scene_id](display);
+}
+
+void play_start(Play *play)
+{
+    assert_ptr(play);
+
+    play_enter_scene(play);
+    InputKey input_key;
+    while (1)
+    {
+        if (xQueueReceive(play->event_queue,
+                    &input_key,
+                    portMAX_DELAY) == pdPASS)
+        {
+            play_send_input(play, input_key);
+        }
+    }
 }
