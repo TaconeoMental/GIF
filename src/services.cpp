@@ -1,6 +1,7 @@
 #include "services.h"
 
 #include "mini_log.h"
+#include "resource.h"
 
 // Servicios
 extern void input_service(void *p);
@@ -27,18 +28,19 @@ const uint8_t OGF_APPLICATION_COUNT = sizeof(GuiApplications) / sizeof(GuiServic
 
 void gui_service_start(const GuiService *service)
 {
-        xTaskCreate(service->callback,
-                    service->name,
-                    service->stack_depth,
-                    NULL,
-                    service->priority,
-                    NULL);
+    xTaskCreate(service->callback,
+                service->name,
+                service->stack_depth,
+                NULL,
+                service->priority,
+                NULL);
 }
 
 void services_start()
 {
-    MLOG_I("Starting services");
+    resources_g = ogf_resources_alloc();
 
+    MLOG_I("Starting services");
     GuiService service;
     for (uint8_t i = 0; i < OGF_SERVICE_COUNT; ++i)
     {
@@ -51,7 +53,5 @@ void services_start()
 
         gui_service_start(&service);
     }
-    vTaskDelay(pdMS_TO_TICKS(500));
-    gui_service_start(&GuiApplications[0]);
     MLOG_I("Services started succesfully");
 }

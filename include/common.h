@@ -35,11 +35,14 @@
 #define MAX_PATH_LENGTH (1 + MAX_DIRECTORY_LEVELS * (MAX_FILENAME_LENGTH + 1))
 
 // Autofuna
-#define assert_ptr(ptr) \
+#define _assert(condition, msg) \
     do { \
-        if (ptr == NULL) { \
-            MLOG_E("Null pointer!"); \
+        if (!(condition)) { \
+            MLOG_E(msg); \
             exit(0);} \
     } while(0)
+
+#define assert_c(condition) _assert(condition, "Assert error: '" STRNX(condition) "'")
+#define assert_ptr(ptr) _assert(ptr != NULL, "Null pointer!")
 
 #endif

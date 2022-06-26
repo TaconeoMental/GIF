@@ -6,6 +6,7 @@
 //#include <freertos/event_groups.h>
 
 #include "mini_log.h"
+#include "resource.h"
 
 Input *input_g;
 
@@ -51,7 +52,8 @@ static bool acceptable_analog_value(uint16_t read_a_value, uint16_t a_value)
 
 void input_service(void *pvParams)
 {
-    input_g = input_alloc();
+    Input *input = input_alloc();
+    ogf_resource_create("input", input);
 
     uint16_t analog_value;
     InputButton button;
@@ -63,12 +65,12 @@ void input_service(void *pvParams)
 
     while (1)
     {
-        analog_value = analogRead(input_g->analog_pin);
+        analog_value = analogRead(input->analog_pin);
 
         found = false;
         for (uint8_t i = 0; i < OGF_BUTTON_COUNT; i++)
         {
-            button = input_g->buttons[i];
+            button = input->buttons[i];
             if (acceptable_analog_value(analog_value, button.analog_value))
             {
                 found = true;
@@ -84,7 +86,7 @@ void input_service(void *pvParams)
                                        bitmask_from_key(button.key));
                     */
 
-                    BaseType_t xStatus = xQueueSendToBack(input_g->event_queue, &button.key, portMAX_DELAY);
+                    BaseType_t xStatus = xQueueSendToBack(input->event_queue, &button.key, portMAX_DELAY);
                     if (xStatus != pdPASS)
                     {
                         MLOG_W("Could not send %d to the queue", button.key);

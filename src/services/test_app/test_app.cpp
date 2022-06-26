@@ -3,6 +3,7 @@
 #include "scripts/test_app_script.h"
 #include "services/gui/gui.h"
 #include "common.h"
+#include "resource.h"
 
 #include <freertos/FreeRTOS.h>
 

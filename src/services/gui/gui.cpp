@@ -5,8 +5,8 @@
 #include "common.h"
 
 #include "services.h"
+#include "resource.h"
 
-Gui *gui_g;
 extern Input *input_g;
 
 Theater *gui_get_theater(Gui *gui)
@@ -40,8 +40,6 @@ static void gui_handle_input(Gui *gui, InputKey key)
 static Gui *gui_alloc()
 {
     Gui *gui = (Gui *) pvPortMalloc(sizeof(Gui));
-    //gui->mutex = xSemaphoreCreateMutex();
-    //xSemaphoreTake(gui->mutex, portMAX_DELAY);
 
     gui->display = (Display *) pvPortMalloc(sizeof(Display));
     display_init(gui->display, GUI_DISPLAY_WIDTH, GUI_DISPLAY_HEIGHT);
@@ -49,22 +47,27 @@ static Gui *gui_alloc()
     display_commit(gui->display);
 
     gui->theater = theater_alloc(gui->display);
-    //xSemaphoreGive(gui->mutex);
     return gui;
 }
 
 void gui_service(void *pvParams)
 {
-    gui_g = gui_alloc();
+    Gui *gui = gui_alloc();
+    ogf_resource_create("gui", gui);
+
+    Input *input = (Input *) ogf_resource_open("input");
 
     InputKey input_key;
+
     while (1)
     {
-        if (xQueueReceive(input_g->event_queue,
+        //ogf_resource_await("input", input);
+
+        if (xQueueReceive(input->event_queue,
                     &input_key,
                     portMAX_DELAY) == pdPASS)
         {
-            gui_handle_input(gui_g, input_key);
+            gui_handle_input(gui, input_key);
         }
     }
     MLOG_E("Should never get here");
