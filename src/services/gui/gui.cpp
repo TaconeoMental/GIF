@@ -7,34 +7,36 @@
 #include "services.h"
 #include "resource.h"
 
-extern Input *input_g;
-
-Theater *gui_get_theater(Gui *gui)
-{
-    assert_ptr(gui);
-    assert_ptr(gui->theater);
-    return gui->theater;
-}
-
 static void gui_handle_input(Gui *gui, InputKey key)
 {
     assert_ptr(gui);
 
     MLOG_D("Button press received: %d", key);
 
-    if (gui->theater->play_count == 0)
+    if (gui->app_manager->app_count == 0)
     {
-        MLOG_W("No active Plays found");
+        MLOG_W("No active apps found");
         return;
     }
 
-    Play *current_play = theater_get_current_play(gui->theater);
+    OgfApplication *current_app = gui->app_manager->current_app;
 
-    BaseType_t xStatus = xQueueSendToBack(current_play->event_queue, &key, portMAX_DELAY);
+    BaseType_t xStatus = xQueueSendToBack(current_app->event_queue, &key, portMAX_DELAY);
     if (xStatus != pdPASS)
     {
         MLOG_W("Could not send %d to the queue", key);
     }
+}
+
+void gui_add_application(Gui *gui, OgfApplication *app)
+{
+    application_manager_add_application(gui->app_manager, app);
+    gui_request_redraw(gui);
+}
+
+void gui_request_redraw(Gui *gui)
+{
+    ogf_application_draw(gui->app_manager->current_app);
 }
 
 static Gui *gui_alloc()
@@ -46,7 +48,7 @@ static Gui *gui_alloc()
     display_draw_str_aligned(gui->display, CPC("OGF"), AlignmentCenter, AlignmentCenter);
     display_commit(gui->display);
 
-    gui->theater = theater_alloc(gui->display);
+    gui->app_manager = application_manager_alloc();
     return gui;
 }
 
@@ -61,8 +63,6 @@ void gui_service(void *pvParams)
 
     while (1)
     {
-        //ogf_resource_await("input", input);
-
         if (xQueueReceive(input->event_queue,
                     &input_key,
                     portMAX_DELAY) == pdPASS)

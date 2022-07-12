@@ -5,8 +5,8 @@
 #include <freertos/semphr.h>
 
 #include "display.h"
-#include "theater.h"
-#include "play.h"
+#include "app_manager.h"
+#include "application.h"
 
 // Pantalla
 #define GUI_DISPLAY_WIDTH 128
@@ -27,9 +27,10 @@
 struct Gui
 {
     Display *display;
-    Theater *theater;
-    //SemaphoreHandle_t mutex;
+    ApplicationManager *app_manager;
 };
-Theater *gui_get_theater(Gui *gui);
+
+void gui_add_application(Gui *gui, OgfApplication *app);
+void gui_request_redraw(Gui *gui);
 
 #endif

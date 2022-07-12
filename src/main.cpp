@@ -7,7 +7,6 @@ void setup()
 {
     LOGGER_INIT();
     services_start();
-    //applications_start();
 }
 
 void loop() {}
