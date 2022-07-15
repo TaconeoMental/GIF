@@ -26,6 +26,8 @@ static void gui_handle_input(Gui *gui, InputKey key)
     {
         MLOG_W("Could not send %d to the queue", key);
     }
+
+    display_commit(gui->display);
 }
 
 void gui_add_application(Gui *gui, OgfApplication *app)
@@ -45,8 +47,6 @@ static Gui *gui_alloc()
 
     gui->display = (Display *) pvPortMalloc(sizeof(Display));
     display_init(gui->display, GUI_DISPLAY_WIDTH, GUI_DISPLAY_HEIGHT);
-    display_draw_str_aligned(gui->display, CPC("OGF"), AlignmentCenter, AlignmentCenter);
-    display_commit(gui->display);
 
     gui->app_manager = application_manager_alloc();
     return gui;

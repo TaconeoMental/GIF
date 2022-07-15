@@ -58,19 +58,13 @@ void display_init(Display *display, uint8_t width, uint8_t height)
 
     display->current_colour = ColourWhite;
     display_set_font(display, FontPrimary);
-    display_set_frame(display, 0, 0, 0, 0);
+    display_set_frame(display, {0, 0, width, height});
 }
 
-void display_set_frame(Display *display,
-                       uint8_t x_roffset,
-                       uint8_t x_loffset,
-                       uint8_t y_toffset,
-                       uint8_t y_boffset)
+void display_set_frame(Display *display, DisplayFrame frame)
 {
-    display->x_roffset = x_roffset;
-    display->x_loffset = x_loffset;
-    display->y_toffset = y_toffset;
-    display->y_boffset = y_boffset;
+    assert_ptr(display);
+    display->frame = frame;
 }
 
 void display_commit(Display *display)
@@ -83,7 +77,8 @@ void display_reset(Display *display)
     display_clear(display);
     display_set_colour(display, ColourBlack);
     display_set_font(display, FontSecondary);
-    display_set_frame(display, 0, 0, 0, 0);
+    display_set_frame(display, {0, 0, display->width, display->height});
+    // commit?
 }
 
 void display_clear(Display *display)
@@ -93,12 +88,21 @@ void display_clear(Display *display)
 
 uint8_t display_get_frame_width(Display *display)
 {
-    return display->width - display->x_loffset - display->x_roffset;
+    assert_ptr(display);
+    // return display->width - display->frame.x_loffset - display->frame.x_roffset;
+    return display->frame.width;
 }
 
 uint8_t display_get_frame_height(Display *display)
 {
-    return display->height - display->y_boffset - display->y_toffset;
+    assert_ptr(display);
+    // return display->height - display->frame.y_boffset - display->frame.y_toffset;
+    return display->frame.height;
+}
+
+DisplayFrame display_get_frame(Display *display)
+{
+    return display->frame;
 }
 
 void display_set_colour(Display *display, Colour colour)
@@ -129,7 +133,7 @@ void display_set_font(Display *display, Font font)
 
 void display_draw_str(Display* display, char *str, uint8_t x, uint8_t y)
 {
-    u8g2p(display).drawStr(x + display->x_loffset, y + display->y_toffset, str);
+    u8g2p(display).drawStr(x + display->frame.x, y + display->frame.y, str);
 }
 
 void display_draw_str_aligned(Display *display, char *str, Alignment h_align, Alignment v_align)
@@ -154,25 +158,25 @@ void display_draw_str_aligned(Display *display, char *str, Alignment h_align, Al
 
 void display_draw_pixel(Display* display, uint8_t x, uint8_t y)
 {
-    x += display->x_loffset;
-    y += display->y_toffset;
+    x += display->frame.x;
+    y += display->frame.y;
     u8g2p(display).drawPixel(x, y);
 }
 
 void display_draw_line(Display* display, uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2)
 {
-    x1 += display->x_loffset;
-    y1 += display->y_toffset;
-    x2 += display->x_loffset;
-    y2 += display->y_toffset;
+    x1 += display->frame.x;
+    y1 += display->frame.y;
+    x2 += display->frame.x;
+    y2 += display->frame.y;
 
     u8g2p(display).drawLine(x1, y1, x2, y2);
 }
 
 void display_draw_box(Display* display, uint8_t x, uint8_t y, uint8_t width, uint8_t height)
 {
-    x += display->x_loffset;
-    y += display->y_toffset;
+    x += display->frame.x;
+    y += display->frame.y;
     u8g2p(display).drawBox(x, y, width, height);
 }
 
@@ -191,8 +195,8 @@ void display_draw_box_aligned(Display *display,
 
 void display_draw_frame(Display* display, uint8_t x, uint8_t y, uint8_t width, uint8_t height)
 {
-    x += display->x_loffset;
-    y += display->y_toffset;
+    x += display->frame.x;
+    y += display->frame.y;
     u8g2p(display).drawFrame(x, y, width, height);
 }
 

@@ -9,8 +9,6 @@
 
 struct ApplicationManager
 {
-    //Display *display; // ????
-    //OgfApplication *apps[MAX_APPLICATION_COUNT];
     OgfApplication **apps;
     uint8_t app_count;
 

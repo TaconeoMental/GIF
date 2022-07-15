@@ -13,7 +13,7 @@ struct TestAppMainFrame
     Label l2;
     Label l3;
     Label l4;
-}
+};
 
 TestAppMainFrame *test_app_main_frame_alloc();
 

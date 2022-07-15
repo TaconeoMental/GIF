@@ -1,9 +1,12 @@
 #include "test_app.h"
 
+#include <freertos/FreeRTOS.h>
+
 #include "common.h"
 #include "resource.h"
+#include "services/gui/gui.h"
+#include "resource.h"
 
-#include <freertos/FreeRTOS.h>
 
 static TestApp *test_app_alloc()
 {
@@ -12,16 +15,17 @@ static TestApp *test_app_alloc()
     ogf_application_set_context(test_app->app, test_app);
 
     test_app->main_frame = test_app_main_frame_alloc();
-    ogf_application_set_frame(test_app->app, test_app->main_frame);
+    ogf_application_set_frame(test_app->app, test_app->main_frame->frame);
 
-    gui_add_application(test_app->app->gui, app);
+    Gui *gui = (Gui *) ogf_resource_open("gui");
+    gui_add_application(gui, test_app->app);
 
     return test_app;
 }
 
 void test_app_free(TestApp *test_app)
 {
-    app_free(test_app->app);
+    //app_free(test_app->app);
     free(test_app);
 }
 

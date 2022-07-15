@@ -1,5 +1,7 @@
 #include "app_manager.h"
 
+#include "common.h"
+
 ApplicationManager *application_manager_alloc()
 {
     ApplicationManager *app_manager = (ApplicationManager *) pvPortMalloc(sizeof(ApplicationManager));
@@ -9,7 +11,7 @@ ApplicationManager *application_manager_alloc()
 }
 
 void application_manager_add_application(ApplicationManager *app_manager,
-                                         OgfApplication *app);
+                                         OgfApplication *app)
 {
     assert_ptr(app_manager);
     assert_ptr(app);

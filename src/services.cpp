@@ -12,8 +12,8 @@ extern void test_app_service(void *p);
 
 const GuiService GuiServices[] =
 {
-    {input_service, "InputService", 2048, 1},
-    {gui_service, "GuiService", 2048, 1}
+    {input_service, "InputService", 2048, 2},
+    {gui_service, "GuiService", 2048, 2}
 };
 
 // Primera aplicación siempre es la primera en ejecutarse
@@ -53,5 +53,6 @@ void services_start()
 
         gui_service_start(&service);
     }
+    gui_service_start(&GuiApplications[0]);
     MLOG_I("Services started succesfully");
 }

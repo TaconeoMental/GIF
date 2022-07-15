@@ -1,5 +1,5 @@
-#ifndef GUI_APPLICATION
-#define GUI_APPLICATION
+#ifndef GUI_APPLICATION_H
+#define GUI_APPLICATION_H
 
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
@@ -8,7 +8,6 @@
 
 struct OgfApplication
 {
-    Gui *gui;
     Frame *current_frame;
     QueueHandle_t event_queue;
     void *context;

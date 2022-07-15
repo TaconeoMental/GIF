@@ -1,5 +1,5 @@
-#ifndef CANVAS_H
-#define CANVAS_H
+#ifndef GUI_DISPLAY_H
+#define GUI_DISPLAY_H
 
 #include <U8g2lib.h>
 
@@ -31,6 +31,14 @@ enum Alignment
     AlignmentCenter
 };
 
+struct DisplayFrame
+{
+    uint8_t x;
+    uint8_t y;
+    uint8_t width;
+    uint8_t height;
+};
+
 /* Estructura prncipal del display OLED
  *
  * El display en sí tiene un ancho y un alto, pero podemos definir un "frame".
@@ -60,10 +68,7 @@ struct Display
     uint8_t width;
     uint8_t height;
 
-    uint8_t x_loffset;
-    uint8_t x_roffset;
-    uint8_t y_toffset;
-    uint8_t y_boffset;
+    DisplayFrame frame;
 
     Colour current_colour;
 };
@@ -72,11 +77,7 @@ struct Display
 void display_init(Display *display, uint8_t width, uint8_t height);
 
 /* Configurar el frame (Area máxima en la que se trabaja) */
-void display_set_frame(Display *display,
-                       uint8_t x_loffset,
-                       uint8_t x_roffset,
-                       uint8_t y_tlffset,
-                       uint8_t y_boffset);
+void display_set_frame(Display *display, DisplayFrame frame);
 
 /* Commit el buffer y dibujarlo */
 void display_commit(Display *display);
@@ -92,6 +93,9 @@ uint8_t display_get_frame_width(Display *display);
 
 /* Devuelve la altura del área dibujable */
 uint8_t display_get_frame_height(Display *display);
+
+/* Devuelve una estructura con las variables que describen al área dibujable */
+DisplayFrame display_get_frame(Display *display);
 
 /* Cofigura el color para dibujar */
 void display_set_colour(Display *display, Colour colour);
