@@ -4,8 +4,8 @@
 #include "resource.h"
 #include "common.h"
 #include "services/input/input.h"
-#include "services/gui/gui.h"
-#include "services/gui/display.h"
+#include "gui.h"
+#include "display.h"
 
 OgfApplication *ogf_application_alloc()
 {

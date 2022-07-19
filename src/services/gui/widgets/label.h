@@ -1,8 +1,8 @@
 #ifndef WIDGET_LABEL
 #define WIDGET_LABEL
 
-#include "services/gui/widget.h"
-#include "services/gui/frame.h"
+#include "widget.h"
+#include "frame.h"
 
 #define MAX_LABEL_TEXT_LENGTH 20
 

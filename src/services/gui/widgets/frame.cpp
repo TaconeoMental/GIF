@@ -42,16 +42,52 @@ Frame *frame_alloc(uint8_t rows, uint8_t columns)
     return frame;
 }
 
+// Porfa no pregunten por este algoritmo, me costó caleta xd
+static uint8_t relative_block_length(int total, int divisions, int index)
+{
+    uint8_t x;
+    uint8_t def = total / divisions;
+    uint8_t resto = total % divisions;
+    if (resto == 0) return def;
+    if (index == divisions / 2 && resto % 2 != 0) return def + 1;
+    for (uint8_t i = 0; i < resto / 2; i++)
+    {
+        x = i * divisions / (resto - 1);
+        if (index == x || index == divisions - x - 1)
+        {
+            def++;
+            break;
+        }
+    }
+    return def;
+}
+
+static uint8_t relative_block_start(int total, int divisions, int index)
+{
+    uint8_t final_index = 0;
+    for (uint8_t i = 0; i < index; i++)
+    {
+        final_index += relative_block_length(total, divisions, i);
+    }
+    return final_index;
+}
+
 void frame_place_widget(Frame *frame, Widget *widget, uint8_t row, uint8_t column)
 {
     assert_ptr(frame);
     assert_ptr(widget);
 
-    //widget->width = frame->widget->width / frame->model->columns;
+    /*
     widget->width = frame->widget->width / frame->model->columns;
     widget->x = frame->widget->x + column * widget->width;
     widget->height = frame->widget->height / frame->model->rows;
     widget->y = frame->widget->y + row * widget->height;
+    */
+
+    widget->width = relative_block_length(frame->widget->width, frame->model->columns, column);
+    widget->x = frame->widget->x + relative_block_start(frame->widget->width, frame->model->columns, column);
+    widget->height = relative_block_length(frame->widget->height, frame->model->rows, row);
+    widget->y = frame->widget->y + relative_block_start(frame->widget->height, frame->model->rows, row);
 
     frame->model->widgets[row][column] = widget;
 }

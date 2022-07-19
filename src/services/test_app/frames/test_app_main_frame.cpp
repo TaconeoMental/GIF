@@ -9,14 +9,16 @@ TestAppMainFrame *test_app_main_frame_alloc()
     label_init(&app_frame->l1, "Arriba");
     label_grid(&app_frame->l1, app_frame->frame, 0, 0); //, NOCOLSPAN, NOSTICKY);
 
-    Frame *bottom_frame = frame_alloc(1, 2);
+    Frame *bottom_frame = frame_alloc(1, 3);
     frame_grid(bottom_frame, app_frame->frame, 1, 0); //, NOCOLSPAN, NOSTICKY);
 
     label_init(&app_frame->l2, "Izq");
     label_grid(&app_frame->l2, bottom_frame, 0, 0); //, NOCOLSPAN, NOSTICKY);
+    label_init(&app_frame->l3, "Izq");
+    label_grid(&app_frame->l3, bottom_frame, 0, 1); //, NOCOLSPAN, NOSTICKY);
 
     label_init(&app_frame->l4, "Der");
-    label_grid(&app_frame->l4, bottom_frame, 0, 1); //, NOCOLSPAN, NOSTICKY);
+    label_grid(&app_frame->l4, bottom_frame, 0, 2); //, NOCOLSPAN, NOSTICKY);
                                                     //
     return app_frame;
 }

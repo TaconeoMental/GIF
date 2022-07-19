@@ -34,7 +34,6 @@ void ogf_resource_create(char *name, void *data)
 
     MLOG_T("%s: %x", res->name, res->data);
     MLOG_I("'%s' resource created succesfully", name);
-    //MLOG_I("'%s' resource created succesfully", resources_g->resource_array[resources_g->resource_count - 1].name);
 }
 
 // Creo que es el medio trucherío dividir un task en 2, pero funciona súper así

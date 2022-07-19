@@ -8,7 +8,7 @@
 #include "mini_log.h"
 #include "resource.h"
 
-Input *input_g;
+//Input *input_g;
 
 const InputButton OGF_BUTTONS[] =
 {

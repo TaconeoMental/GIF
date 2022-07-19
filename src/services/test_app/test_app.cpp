@@ -5,7 +5,6 @@
 #include "common.h"
 #include "resource.h"
 #include "services/gui/gui.h"
-#include "resource.h"
 
 
 static TestApp *test_app_alloc()

@@ -1,7 +1,7 @@
 #ifndef TEST_APP_MAIN_FRAME
 #define TEST_APP_MAIN_FRAME
 
-#include "services/gui/frame.h"
+#include "services/gui/widgets/frame.h"
 #include "services/gui/widgets/label.h"
 
 struct TestAppMainFrame

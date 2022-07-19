@@ -2,7 +2,7 @@
 #define GUI_WIDGET_H
 
 #include <stdint.h>
-#include "display.h"
+#include "services/gui/display.h"
 
 // FD pq soy un desordenado
 struct Widget;

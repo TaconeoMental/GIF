@@ -4,7 +4,7 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
 
-#include "frame.h"
+#include "widgets/frame.h"
 
 struct OgfApplication
 {
