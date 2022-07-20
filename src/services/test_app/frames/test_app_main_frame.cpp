@@ -9,25 +9,25 @@ TestAppMainFrame *test_app_main_frame_alloc()
     label_init(&app_frame->l1, "Arriba");
     label_has_border(&app_frame->l1, true);
     label_set_padding(&app_frame->l1, 1, 1);
-    label_grid(&app_frame->l1, app_frame->frame, 0, 0); //, NOCOLSPAN, NOSTICKY);
+    label_grid(&app_frame->l1, app_frame->frame, 0, 0);
 
     Frame *bottom_frame = frame_alloc(1, 3);
-    frame_grid(bottom_frame, app_frame->frame, 1, 0); //, NOCOLSPAN, NOSTICKY);
+    frame_grid(bottom_frame, app_frame->frame, 1, 0);
 
     label_init(&app_frame->l2, "Izq");
     label_has_border(&app_frame->l2, true);
     label_set_padding(&app_frame->l2, 1, 1);
-    label_grid(&app_frame->l2, bottom_frame, 0, 0); //, NOCOLSPAN, NOSTICKY);
-                                                    //
+    label_grid(&app_frame->l2, bottom_frame, 0, 0);
+
     label_init(&app_frame->l3, "Cen");
     label_has_border(&app_frame->l3, true);
     label_set_padding(&app_frame->l3, 1, 1);
-    label_grid(&app_frame->l3, bottom_frame, 0, 1); //, NOCOLSPAN, NOSTICKY);
+    label_grid(&app_frame->l3, bottom_frame, 0, 1);
 
     label_init(&app_frame->l4, "Der");
     label_has_border(&app_frame->l4, true);
     label_set_padding(&app_frame->l4, 1, 1);
-    label_grid(&app_frame->l4, bottom_frame, 0, 2); //, NOCOLSPAN, NOSTICKY);
-                                                    //
+    label_grid(&app_frame->l4, bottom_frame, 0, 2);
+
     return app_frame;
 }

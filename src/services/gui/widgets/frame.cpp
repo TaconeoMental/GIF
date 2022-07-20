@@ -77,13 +77,6 @@ void frame_place_widget(Frame *frame, Widget *widget, uint8_t row, uint8_t colum
     assert_ptr(frame);
     assert_ptr(widget);
 
-    /*
-    widget->width = frame->widget->width / frame->model->columns;
-    widget->x = frame->widget->x + column * widget->width;
-    widget->height = frame->widget->height / frame->model->rows;
-    widget->y = frame->widget->y + row * widget->height;
-    */
-
     widget->width = relative_block_length(frame->widget->width, frame->model->columns, column);
     widget->x = frame->widget->x + relative_block_start(frame->widget->width, frame->model->columns, column);
     widget->height = relative_block_length(frame->widget->height, frame->model->rows, row);

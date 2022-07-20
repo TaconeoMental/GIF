@@ -5,7 +5,6 @@
 
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
-//#include <freertos/event_groups.h>
 
 #define BUTTON_ANALOG_PIN 12
 #define ANALOG_VALUE_MARGIN 100
@@ -37,7 +36,6 @@ struct Input
 {
     InputButton *buttons;
     uint16_t analog_pin;
-    //EventGroupHandle_t flags_event_group;
     QueueHandle_t event_queue;
 };
 

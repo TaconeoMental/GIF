@@ -3,12 +3,9 @@
 #include <Arduino.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/timers.h>
-//#include <freertos/event_groups.h>
 
 #include "mini_log.h"
 #include "resource.h"
-
-//Input *input_g;
 
 const InputButton OGF_BUTTONS[] =
 {
@@ -23,7 +20,6 @@ static Input *input_alloc()
     Input *input = (Input *) pvPortMalloc(sizeof(Input));
     input->buttons = (InputButton *) pvPortMalloc(sizeof(OGF_BUTTONS));
     memcpy(input->buttons, OGF_BUTTONS, sizeof(OGF_BUTTONS));
-    //input->flags_event_group = xEventGroupCreate();
     input->analog_pin = BUTTON_ANALOG_PIN;
     input->event_queue = xQueueCreate(5, sizeof(InputKey));
     return input;
@@ -58,7 +54,6 @@ void input_service(void *pvParams)
     uint16_t analog_value;
     InputButton button;
     InputKey last_key = InputKeyNotPressed;
-    //EventBits_t event_bit_mask;
     bool found;
 
     TickType_t last_wake_time = xTaskGetTickCount();
@@ -80,11 +75,6 @@ void input_service(void *pvParams)
                             button.name,
                             button.analog_value,
                             analog_value);
-
-                    /*
-                    xEventGroupSetBits(input_g.flags_event_group,
-                                       bitmask_from_key(button.key));
-                    */
 
                     BaseType_t xStatus = xQueueSendToBack(input->event_queue, &button.key, portMAX_DELAY);
                     if (xStatus != pdPASS)
