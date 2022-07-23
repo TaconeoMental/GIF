@@ -24,8 +24,7 @@
 // Char pointer cast
 #define CPC(str) (char *)str
 
-// Largos de char* comunes
-// TODO?
+#define COUNT_OF(x) (sizeof(x) / sizeof(x[0]))
 
 // máxima cantidad de subdirectorios a los que se puede acceder, sin contar
 // root.

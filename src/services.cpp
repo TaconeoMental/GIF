@@ -1,5 +1,6 @@
 #include "services.h"
 
+#include "common.h"
 #include "mini_log.h"
 #include "resource.h"
 
@@ -22,9 +23,8 @@ const GuiService GuiApplications[] =
     {test_app_service, "Test App", 2048, 1}
 };
 
-const uint8_t OGF_SERVICE_COUNT = sizeof(GuiServices) / sizeof(GuiService);
-const uint8_t OGF_APPLICATION_COUNT = sizeof(GuiApplications) / sizeof(GuiService);
-
+const uint8_t OGF_SERVICE_COUNT = COUNT_OF(GuiServices);
+const uint8_t OGF_APPLICATION_COUNT = COUNT_OF(GuiApplications);
 
 void gui_service_start(const GuiService *service)
 {

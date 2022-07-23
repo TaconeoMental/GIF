@@ -13,7 +13,7 @@ OgfResources *ogf_resources_alloc()
     return resources;
 }
 
-void ogf_resource_create(char *name, void *data)
+void ogf_resource_create(const char *name, void *data)
 {
     assert_ptr(resources_g);
     assert_c(strlen(name) < MAX_RESOURCE_NAME_LENGTH);
@@ -38,7 +38,7 @@ void ogf_resource_create(char *name, void *data)
 
 // Creo que es el medio trucherío dividir un task en 2, pero funciona súper así
 // que ñeee
-void *ogf_resource_open(char *name)
+void *ogf_resource_open(const char *name)
 {
     OgfResource *resource;
     while (1)

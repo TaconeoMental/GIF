@@ -3,12 +3,20 @@
 #include "common.h"
 #include "services/gui/gui.h"
 
-void frame_draw_callback(Display *display, Widget *widget)
+void frame_grid_draw_callback(Display *display, Widget *widget)
 {
     assert_ptr(display);
     assert_ptr(widget);
 
-    FrameModel *model = (FrameModel *) widget->context;
+    FrameGridModel *model = (FrameGridModel *) widget->context;
+
+    if (model->has_border)
+    {
+        display_draw_frame(display, widget->x,
+                                    widget->y,
+                                    widget->width,
+                                    widget->height);
+    }
 
     Widget *curr_widget;
     for (uint8_t r = 0; r < model->rows; r++)
@@ -21,25 +29,55 @@ void frame_draw_callback(Display *display, Widget *widget)
     }
 }
 
-Frame *frame_alloc(uint8_t rows, uint8_t columns)
+Frame *frame_alloc()
 {
     Frame *frame = (Frame *) pvPortMalloc(sizeof(Frame));
+    frame->frame_type = FRAME_TYPE_STACK;
 
     frame->widget = widget_alloc();
-    widget_set_draw_callback(frame->widget, frame_draw_callback);
-
-    frame->model = (FrameModel *) pvPortMalloc(sizeof(FrameModel));
-    widget_set_context(frame->widget, frame->model);
-    frame->model->rows = rows;
-    frame->model->columns = columns;
-
-    frame->model->widgets = (Widget ***) pvPortMalloc(rows * sizeof(Widget **));
-    for (uint8_t i = 0; i < rows; i++)
-    {
-        frame->model->widgets[i] = (Widget **) pvPortMalloc(columns * sizeof(Widget *));
-    }
+    widget_set_draw_callback(frame->widget, frame_grid_draw_callback);
 
     return frame;
+}
+
+void frame_set_border(Frame *frame, bool b)
+{
+    assert_ptr(frame);
+    switch (frame->frame_type)
+    {
+        case FRAME_TYPE_GRID:
+            frame->grid_model->has_border = true;
+            break;
+    }
+}
+
+// static??
+bool frame_has_border(Frame *frame)
+{
+    assert_ptr(frame);
+    switch (frame->frame_type)
+    {
+        case FRAME_TYPE_GRID:
+            return frame->grid_model->has_border;
+    }
+    return false;
+}
+
+void frame_init_grid(Frame *frame, uint8_t columns, uint8_t rows)
+{
+    assert_ptr(frame);
+    frame->frame_type = FRAME_TYPE_GRID;
+    frame->grid_model = (FrameGridModel *) pvPortMalloc(sizeof(FrameGridModel));
+    widget_set_context(frame->widget, frame->grid_model);
+    frame->grid_model->rows = rows;
+    frame->grid_model->columns = columns;
+    frame->grid_model->has_border = false;
+
+    frame->grid_model->widgets = (Widget ***) pvPortMalloc(rows * sizeof(Widget **));
+    for (uint8_t i = 0; i < rows; i++)
+    {
+        frame->grid_model->widgets[i] = (Widget **) pvPortMalloc(columns * sizeof(Widget *));
+    }
 }
 
 // Porfa no pregunten por este algoritmo, me costó caleta xd
@@ -72,24 +110,31 @@ static uint8_t relative_block_start(int total, int divisions, int index)
     return final_index;
 }
 
-void frame_place_widget(Frame *frame, Widget *widget, uint8_t row, uint8_t column)
+void frame_place_widget(Frame *frame, Widget *widget, uint8_t column, uint8_t row, uint8_t x_p, uint8_t y_p)
 {
     assert_ptr(frame);
     assert_ptr(widget);
+    assert_c(frame->frame_type == FRAME_TYPE_GRID);
 
-    widget->width = relative_block_length(frame->widget->width, frame->model->columns, column);
-    widget->x = frame->widget->x + relative_block_start(frame->widget->width, frame->model->columns, column);
-    widget->height = relative_block_length(frame->widget->height, frame->model->rows, row);
-    widget->y = frame->widget->y + relative_block_start(frame->widget->height, frame->model->rows, row);
+    uint8_t border_pixel = 0;
+    if (frame_has_border(frame)) border_pixel = 1;
 
-    frame->model->widgets[row][column] = widget;
+    widget->width = relative_block_length(frame->widget->width - 2 * border_pixel, frame->grid_model->columns, column) - 2 * x_p;
+    widget->x = frame->widget->x + x_p + border_pixel
+                + relative_block_start(frame->widget->width - 2 * border_pixel, frame->grid_model->columns, column);
+    widget->height = relative_block_length(frame->widget->height - 2 * border_pixel, frame->grid_model->rows, row) - 2 * y_p;
+    widget->y = frame->widget->y + y_p + border_pixel
+                + relative_block_start(frame->widget->height - 2 * border_pixel, frame->grid_model->rows, row);
+
+    frame->grid_model->widgets[row][column] = widget;
 }
 
-void frame_grid(Frame *frame, Frame *parent_frame, uint8_t row, uint8_t column)
+void frame_grid(Frame *frame, Frame *parent_frame, uint8_t column, uint8_t row, uint8_t x_p, uint8_t y_p)
 {
     assert_ptr(frame);
     assert_ptr(parent_frame);
-    frame_place_widget(parent_frame, frame->widget, row, column);
+    assert_c(parent_frame->frame_type == FRAME_TYPE_GRID);
+    frame_place_widget(parent_frame, frame->widget, column, row, x_p, y_p);
 }
 
 void frame_print_info(Frame *frame)

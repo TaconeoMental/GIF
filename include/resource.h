@@ -22,7 +22,7 @@ struct OgfResources
 extern OgfResources *resources_g;
 
 OgfResources *ogf_resources_alloc();
-void ogf_resource_create(char *name, void *data);
-void *ogf_resource_open(char *name);
+void ogf_resource_create(const char *name, void *data);
+void *ogf_resource_open(const char *name);
 
 #endif
