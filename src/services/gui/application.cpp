@@ -3,15 +3,15 @@
 #include "mini_log.h"
 #include "resource.h"
 #include "common.h"
-#include "services/input/input.h"
-#include "gui.h"
 #include "display.h"
+#include "services/input/input.h"
+#include "services/gui/gui.h"
 
 OgfApplication *ogf_application_alloc()
 {
     OgfApplication *app = (OgfApplication *) pvPortMalloc(sizeof(OgfApplication));
     app->event_queue = xQueueCreate(5, sizeof(InputKey));
-
+    app->gui = (Gui *) ogf_resource_open("gui");
     return app;
 }
 
@@ -29,29 +29,29 @@ void ogf_application_set_frame(OgfApplication *app, Frame *frame)
     app->current_frame = frame;
 }
 
-void ogf_application_draw(OgfApplication *app)
+void ogf_application_attach_to_gui(OgfApplication *app)
 {
-    //frame_render(app->frame, app->gui->display);
+    assert_ptr(app);
+    application_manager_add_application(app->gui->app_manager, app);
+}
+
+void ogf_application_request_draw(OgfApplication *app)
+{
+    assert_ptr(app);
+    xEventGroupSetBits(app->gui->flags_event_group, GUI_FLAG_DRAW);
 }
 
 void ogf_application_start(OgfApplication *app)
 {
     assert_ptr(app);
 
-    Gui *gui = (Gui *) ogf_resource_open("gui");
-
-    Widget *widget = app->current_frame->widget;
-    assert_ptr(widget);
-
-    widget->draw_callback(gui->display, widget);
-    display_commit(gui->display);
-
+    ogf_application_request_draw(app);
     InputKey input_key;
     while (1)
     {
         if (xQueueReceive(app->event_queue,
-                    &input_key,
-                    portMAX_DELAY) == pdPASS)
+                          &input_key,
+                          portMAX_DELAY) == pdPASS)
         {
             MLOG_D("TODO");
         }

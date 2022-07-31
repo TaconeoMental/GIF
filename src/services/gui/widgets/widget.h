@@ -18,8 +18,6 @@ struct Widget
     uint8_t y;
     uint8_t width;
     uint8_t height;
-    uint8_t x_padding;
-    uint8_t y_padding;
 
     WidgetDrawCallback draw_callback;
 

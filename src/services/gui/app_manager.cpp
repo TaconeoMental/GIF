@@ -18,7 +18,7 @@ void application_manager_add_application(ApplicationManager *app_manager,
 
     if (app_manager->app_count == MAX_APPLICATION_COUNT)
     {
-        MLOG_E("Arreglo de aplicaciones lleno!");
+        MLOG_E("Application array is full!");
         return;
     }
     app_manager->apps[app_manager->app_count++] = app;

@@ -5,7 +5,9 @@
 #include <freertos/timers.h>
 
 #include "mini_log.h"
+#include "common.h"
 #include "resource.h"
+#include "services/gui/gui.h"
 
 const InputButton OGF_BUTTONS[] =
 {
@@ -13,7 +15,7 @@ const InputButton OGF_BUTTONS[] =
     {InputKeyOk, 260, "OK"},
     {InputKeyRight, 640, "RIGHT"},
 };
-const uint8_t OGF_BUTTON_COUNT = sizeof(OGF_BUTTONS) / sizeof(InputButton);
+const uint8_t OGF_BUTTON_COUNT = COUNT_OF(OGF_BUTTONS);
 
 static Input *input_alloc()
 {
@@ -23,20 +25,6 @@ static Input *input_alloc()
     input->analog_pin = BUTTON_ANALOG_PIN;
     input->event_queue = xQueueCreate(5, sizeof(InputKey));
     return input;
-}
-
-// Esto perfectamente podría ser un atributo de InputButton...
-static EventBits_t bitmask_from_key(InputKey key)
-{
-    switch (key)
-    {
-    case InputKeyLeft:
-        return INPUT_LEFT_EVENT;
-    case InputKeyOk:
-        return INPUT_OK_EVENT;
-    case InputKeyRight:
-        return INPUT_RIGHT_EVENT;
-    }
 }
 
 // Podría ser un macro, pero no me importa porque como torta
@@ -50,6 +38,8 @@ void input_service(void *pvParams)
 {
     Input *input = input_alloc();
     ogf_resource_create("input", input);
+
+    Gui *gui = (Gui *) ogf_resource_open("gui");
 
     uint16_t analog_value;
     InputButton button;
@@ -80,6 +70,10 @@ void input_service(void *pvParams)
                     if (xStatus != pdPASS)
                     {
                         MLOG_W("Could not send %d to the queue", button.key);
+                    }
+                    else
+                    {
+                        xEventGroupSetBits(gui->flags_event_group, GUI_FLAG_INPUT);
                     }
 
                     last_key = button.key;

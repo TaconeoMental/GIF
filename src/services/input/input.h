@@ -22,6 +22,7 @@ enum InputKey
     InputKeyBack,
 
     // Valor especial, no tocar ni mover
+    // Por qué no? >:(
     InputKeyNotPressed,
 };
 

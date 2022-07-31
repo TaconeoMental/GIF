@@ -49,7 +49,14 @@ void label_grid(Label *label, Frame *frame, uint8_t column, uint8_t row, uint8_t
 {
     assert_ptr(label);
     assert_ptr(frame);
-    frame_place_widget(frame, label->widget, column, row, x_p, y_p);
+    frame_grid_widget(frame, label->widget, column, row, x_p, y_p);
+}
+
+void label_stack(Label *label, Frame *frame, FrameStackDirection stack_dir, int8_t width, int8_t height)
+{
+    assert_ptr(label);
+    assert_ptr(frame);
+    frame_stack_widget(frame, label->widget, stack_dir, width, height);
 }
 
 void label_set_border(Label *label, bool b)

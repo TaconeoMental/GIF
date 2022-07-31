@@ -26,27 +26,31 @@ static void gui_handle_input(Gui *gui, InputKey key)
     {
         MLOG_W("Could not send %d to the queue", key);
     }
+}
 
+static void gui_redraw(Gui *gui)
+{
+    assert_ptr(gui);
+    OgfApplication *current_app = gui->app_manager->current_app;
+    Widget *widget = current_app->current_frame->widget;
+    assert_ptr(widget);
+
+    // Dibujamos el frame
+    widget->draw_callback(gui->display, widget);
     display_commit(gui->display);
-}
-
-void gui_add_application(Gui *gui, OgfApplication *app)
-{
-    application_manager_add_application(gui->app_manager, app);
-    gui_request_redraw(gui);
-}
-
-void gui_request_redraw(Gui *gui)
-{
-    ogf_application_draw(gui->app_manager->current_app);
 }
 
 static Gui *gui_alloc()
 {
     Gui *gui = (Gui *) pvPortMalloc(sizeof(Gui));
-
     gui->display = (Display *) pvPortMalloc(sizeof(Display));
     display_init(gui->display, GUI_DISPLAY_WIDTH, GUI_DISPLAY_HEIGHT);
+
+    gui->flags_event_group = xEventGroupCreate();
+    if (gui->flags_event_group == NULL)
+    {
+        MLOG_E("Could not create event group.");
+    }
 
     gui->app_manager = application_manager_alloc();
     return gui;
@@ -59,15 +63,29 @@ void gui_service(void *pvParams)
 
     Input *input = (Input *) ogf_resource_open("input");
 
-    InputKey input_key;
-
+    EventBits_t xEventGroupValue;
     while (1)
     {
-        if (xQueueReceive(input->event_queue,
-                    &input_key,
-                    portMAX_DELAY) == pdPASS)
+        xEventGroupValue = xEventGroupWaitBits(gui->flags_event_group,
+                                               GUI_FLAG_ALL,
+                                               pdTRUE,
+                                               pdFALSE,
+                                               portMAX_DELAY
+                                               );
+        if (xEventGroupValue & GUI_FLAG_INPUT)
         {
-            gui_handle_input(gui, input_key);
+            InputKey input_key;
+            if (xQueueReceive(input->event_queue,
+                                 &input_key,
+                                 portMAX_DELAY) == pdPASS)
+            {
+                gui_handle_input(gui, input_key);
+            }
+        }
+
+        if (xEventGroupValue & GUI_FLAG_DRAW)
+        {
+            gui_redraw(gui);
         }
     }
     MLOG_E("Should never get here");
