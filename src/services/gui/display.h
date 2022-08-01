@@ -9,11 +9,13 @@
 
 #define U8G2_TYPE U8G2_SH1106_128X64_NONAME_F_HW_I2C
 
+#define INVERT_COLOUR(c) (Colour)!c
+
 /* Colores para la pantalla OLED */
 enum Colour
 {
-    ColourWhite = 0x00,
-    ColourBlack = 0x01,
+    ColourBlack = 0x00,
+    ColourWhite = 0x01,
 };
 
 enum Font
@@ -138,26 +140,26 @@ void display_draw_frame_aligned(Display *display,
                               Alignment h_align,
                               Alignment v_align);
 
+/* Dibuja un cuadrilátero con bordes redondeados y su vértice superior izquiero en (x, y) */
+void display_draw_rbox(Display* display,
+                       uint8_t x,
+                       uint8_t y,
+                       uint8_t width,
+                       uint8_t height,
+                       uint8_t radius);
+
+/* Dibuja un cuadro con bordeas redondeados alineado */
+void display_draw_rframe(Display* display,
+                       uint8_t x,
+                       uint8_t y,
+                       uint8_t width,
+                       uint8_t height,
+                       uint8_t radius);
+
 // TODO
 /*
 void display_draw_circle(Display* canvas, uint8_t x, uint8_t y, uint8_t r);
 void display_draw_disc(Display* canvas, uint8_t x, uint8_t y, uint8_t r);
-
-void display_draw_rbox(
-    Display* canvas,
-    uint8_t x,
-    uint8_t y,
-    uint8_t width,
-    uint8_t height,
-    uint8_t radius);
-
-void display_draw_rframe(
-    Display* canvas,
-    uint8_t x,
-    uint8_t y,
-    uint8_t width,
-    uint8_t height,
-    uint8_t radius);
 */
 
 #endif

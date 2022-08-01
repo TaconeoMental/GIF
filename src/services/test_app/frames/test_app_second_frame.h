@@ -12,6 +12,7 @@ struct TestAppSecondFrame
     Label l2;
     Label l3;
     Label l4;
+    Label l5;
 };
 
 TestAppSecondFrame *test_app_second_frame_alloc();

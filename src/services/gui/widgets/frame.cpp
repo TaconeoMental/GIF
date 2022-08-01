@@ -9,7 +9,6 @@ static FrameStackModel *frame_stack_model_alloc()
     FrameStackModel *model = (FrameStackModel *) pvPortMalloc(sizeof(FrameStackModel));
     model->has_border = false;
     model->widget_count = 0;
-    model->widget_arr_size = INITIAL_STACK_SIZE;
     model->widgets = (Widget **) pvPortMalloc(INITIAL_STACK_SIZE * sizeof(Widget *));
     model->available_frame = {0, 0, GUI_DISPLAY_WIDTH, GUI_DISPLAY_HEIGHT};
     return model;
@@ -207,11 +206,11 @@ void frame_stack_widget(Frame *frame, Widget *widget, FrameStackDirection stack_
             available_frame->height -= height;
             break;
         case FRAME_STACK_RIGHT:
-            x_coor = available_frame->width - width;
+            x_coor = available_frame->x + available_frame->width - width;
             available_frame->width -= width;
             break;
         case FRAME_STACK_DOWN:
-            y_coor = available_frame->height - height;
+            y_coor = available_frame->y + available_frame->height - height;
             available_frame->height -= height;
             break;
     }
@@ -221,11 +220,6 @@ void frame_stack_widget(Frame *frame, Widget *widget, FrameStackDirection stack_
     widget->height = height;
 
     FrameStackModel *model = frame->stack_model;
-    if (model->widget_count == model->widget_arr_size)
-    {
-        model->widget_arr_size += 10; // Completa y totalmente arbitrario B)
-        //model->widgets = (Widget *) pvPortReAlloc(model->widgets, model->widget_arr_size);
-    }
     model->widgets[model->widget_count++] = widget;
 }
 
@@ -237,9 +231,9 @@ void frame_stack(Frame *frame, Frame *parent_frame, FrameStackDirection stack_di
     frame_stack_widget(parent_frame, frame->widget, stack_dir, width, height);
 }
 
-void frame_print_info(Frame *frame)
+void widget_print_info(Widget *widget)
 {
-    MLOG_W("P(%d, %d, %d, %d)", frame->widget->x, frame->widget->y, frame->widget->width, frame->widget->height);
+    MLOG_W("P(%d, %d, %d, %d)", widget->x, widget->y, widget->width, widget->height);
 }
 
 void frame_set_as_main(Frame *frame)

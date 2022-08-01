@@ -212,3 +212,27 @@ void display_draw_frame_aligned(Display *display,
     align_point(display, &x, &y, width, height, h_align, v_align);
     display_draw_frame(display, x, y, width, height);
 }
+
+void display_draw_rbox(Display* display,
+                       uint8_t x,
+                       uint8_t y,
+                       uint8_t width,
+                       uint8_t height,
+                       uint8_t radius)
+{
+    x += display->frame.x;
+    y += display->frame.y;
+    u8g2p(display).drawRBox(x, y, width, height, radius);
+}
+
+void display_draw_rframe(Display* display,
+                       uint8_t x,
+                       uint8_t y,
+                       uint8_t width,
+                       uint8_t height,
+                       uint8_t radius)
+{
+    x += display->frame.x;
+    y += display->frame.y;
+    u8g2p(display).drawRFrame(x, y, width, height, radius);
+}

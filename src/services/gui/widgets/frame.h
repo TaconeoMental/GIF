@@ -36,7 +36,6 @@ struct FrameStackModel
     bool has_border;
     Widget **widgets;
     uint8_t widget_count;
-    uint8_t widget_arr_size;
 
     // Espacio disponible
     DisplayFrame available_frame;
@@ -66,6 +65,6 @@ void frame_stack(Frame *frame, Frame *parent_frame, FrameStackDirection stack_di
 void frame_stack_widget(Frame *frame, Widget *widget, FrameStackDirection stack_dir, int8_t width, int8_t height);
 
 // DEBUG
-void frame_print_info(Frame *frame);
+void widget_print_info(Widget *widget);
 
 #endif
