@@ -1,0 +1,8 @@
+- Añadir posibilidad de elegir tipo de input que se va a usar, esto es, si se
+  va a usar un solo pin análogo y cada botón entregará un valor particular o si
+  se va a usar un pin por botón.
+- Añadir distintas "capas" en el gui para que, por ejemplo, una aplicación
+  pueda solicitar un redraw y que la aplicación en el background siga
+  funcionando.
+- Ver cómo y cúando llamo a los "free" xd
+- Añadir tipos de InputKey, tipo click, doble click, etc.
