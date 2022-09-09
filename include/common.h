@@ -33,6 +33,9 @@
 // +1 para los '/' y +1 para el '/' del root
 #define MAX_PATH_LENGTH (1 + MAX_DIRECTORY_LEVELS * (MAX_FILENAME_LENGTH + 1))
 
+// FUNA FUNA FUNA FUNA...
+#define SIMPLE_ALLOC(x) (x *)pvPortMalloc(sizeof(x))
+
 // Autofuna
 #define _assert(condition, msg) \
     do { \
@@ -42,6 +45,6 @@
     } while(0)
 
 #define assert_c(condition) _assert(condition, "Assert error: '" STRNX(condition) "'")
-#define assert_ptr(ptr) _assert(ptr != NULL, "Null pointer!")
+#define assert_ptr(ptr) _assert(ptr != NULL, "'" STRNX(ptr) "' is a null pointer!")
 
 #endif

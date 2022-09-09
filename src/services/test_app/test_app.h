@@ -2,15 +2,12 @@
 #define TEST_APP_H
 
 #include "services/gui/application.h"
-#include "frames/test_app_main_frame.h"
-#include "frames/test_app_second_frame.h"
+#include "views/test_app_second_view.h"
 
 struct TestApp
 {
     OgfApplication *app;
-
-    //TestAppMainFrame *main_frame;
-    TestAppSecondFrame *second_frame;
+    TestAppSecondView *second_view;
 };
 
 void test_app_service(void *pvParams);

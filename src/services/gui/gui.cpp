@@ -1,9 +1,8 @@
 #include "gui.h"
 
 #include "services/input/input.h"
-#include "mini_log.h"
+#include "services/gui/view.h"
 #include "common.h"
-
 #include "services.h"
 #include "resource.h"
 
@@ -32,7 +31,12 @@ static void gui_redraw(Gui *gui)
 {
     assert_ptr(gui);
     OgfApplication *current_app = gui->app_manager->current_app;
-    Widget *widget = current_app->current_frame->widget;
+
+    //OgfApplicationView *view = current_app->views[current_app->current_view_id]->view;
+    OgfApplicationView *view = ogf_indexed_views_get_current(&current_app->views);
+    // OgfApplication *view = ogf_application_get_current_view(current_app);
+
+    Widget *widget = view->frame->widget;
     assert_ptr(widget);
 
     // Dibujamos el frame

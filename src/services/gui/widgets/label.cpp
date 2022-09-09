@@ -7,7 +7,6 @@ void label_draw_callback(Display *display, Widget *widget)
     assert_ptr(display);
     assert_ptr(widget);
 
-
     uint8_t radius = 0.20 * widget->width;
     DisplayFrame display_frame = display_get_frame(display);
     LabelModel *label = (LabelModel *) widget->context;

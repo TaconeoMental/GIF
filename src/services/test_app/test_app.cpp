@@ -5,19 +5,23 @@
 #include "common.h"
 #include "resource.h"
 #include "services/gui/gui.h"
+#include "services/gui/application.h"
+#include "views/test_app_view.h"
+#include "views/test_app_second_view.h"
 
-
-static TestApp *test_app_alloc()
+TestApp *test_app_alloc()
 {
     TestApp *test_app = (TestApp *) pvPortMalloc(sizeof(TestApp));
     test_app->app = ogf_application_alloc();
     ogf_application_set_context(test_app->app, test_app);
 
-    test_app->second_frame = test_app_second_frame_alloc();
-    ogf_application_set_frame(test_app->app, test_app->second_frame->frame);
-
+    test_app->second_view = test_app_second_view_alloc();
+    ogf_application_add_view(
+        test_app->app,
+        TestAppViewSecond,
+        test_app_second_view_get_view(test_app->second_view));
+    ogf_application_next_view(test_app->app, TestAppViewSecond);
     ogf_application_attach_to_gui(test_app->app);
-
     return test_app;
 }
 
