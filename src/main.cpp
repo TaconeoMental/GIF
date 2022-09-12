@@ -6,6 +6,7 @@
 void setup()
 {
     LOGGER_INIT();
+    delay(1000);
     services_start();
 }
 

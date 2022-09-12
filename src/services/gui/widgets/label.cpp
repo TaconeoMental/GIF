@@ -54,6 +54,7 @@ void label_draw_callback(Display *display, Widget *widget)
                                  MIN(widget->width, display_frame.width),
                                  MIN(widget->height, display_frame.height)};
     display_set_frame(display, widget_frame);
+
     if (label->has_fill) display_invert_colour(display);
     display_draw_str_aligned(display, label->text, AlignmentCenter, AlignmentCenter);
     if (label->has_fill) display_invert_colour(display);
@@ -67,7 +68,7 @@ void label_init(Label *label, const char *text)
     label->widget = widget_alloc();
     widget_set_draw_callback(label->widget, label_draw_callback);
 
-    LabelModel *model = (LabelModel *) pvPortMalloc(sizeof(LabelModel));
+    LabelModel *model = SIMPLE_ALLOC(LabelModel);
     model->has_border = false;
     model->has_round_border = false;
     model->has_fill = false;

@@ -32,7 +32,7 @@ struct OgfApplication
     Gui *gui;
     QueueHandle_t event_queue;
     void *context;
-    IndexedViews views;
+    IndexedViews *indexed_views;
 };
 
 OgfApplication *ogf_application_alloc();
@@ -45,6 +45,6 @@ void ogf_application_send_custom_event(OgfApplication *app, uint8_t event);
 // View
 void ogf_application_add_view(OgfApplication *app, uint8_t view_id, OgfApplicationView *view);
 void ogf_application_set_view(OgfApplication *app, uint8_t view_id);
-void ogf_application_next_view(OgfApplication *app, uint16_t view_id);
+void ogf_application_next_view(OgfApplication *app, uint8_t view_id);
 
 #endif

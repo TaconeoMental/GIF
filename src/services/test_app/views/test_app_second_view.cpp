@@ -39,14 +39,17 @@ TestAppSecondView *test_app_second_view_alloc()
     }
     label_set_fill(&model->labels[0], true);
 
-    label_init(&model->l2, "DER");
+    label_init(&model->l2, "TEST!");
     label_stack(&model->l2, main_frame, FRAME_STACK_RIGHT, 40, FRAME_STACK_FILL_Y);
+
+    model->current_label = 0;
 
     ogf_application_view_set_event_handler(app_view->view, test_app_second_view_handler);
     ogf_application_view_set_handlers(app_view->view, test_app_second_view_handlers);
     ogf_application_view_set_frame(app_view->view, main_frame);
     ogf_application_view_set_context(app_view->view, model);
 
+    MLOG_T("FINISHED INIT");
     return app_view;
 }
 
@@ -80,14 +83,14 @@ void test_app_second_view_callback(TestAppEvent event, void *context)
         MLOG_E("Unknown event Id=%d", event);
         return;
     }
+    MLOG_W("SENDING CUSTOM EVENT");
     ogf_application_send_custom_event(app->app, event);
 }
 
 void test_app_second_view_handler(void *context, InputKey key)
 {
     assert_ptr(context);
-    TestAppSecondView *view = (TestAppSecondView *) context;
-    TestAppSecondViewModel *model = test_app_second_view_get_model(view);
+    TestAppSecondViewModel *model = (TestAppSecondViewModel *) context;
 
     uint8_t or_label = model->current_label;
     switch (key)
@@ -123,6 +126,7 @@ void test_app_second_view_on_event(void *context, OgfApplicationEvent event)
     TestAppSecondView *second_view = app->second_view;
     if (event.type == OgfApplicationEventTypeInput)
     {
+        MLOG_T("RECEIVED INPUT EVENT");
         return;
     }
 

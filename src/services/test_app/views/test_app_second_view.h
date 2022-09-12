@@ -13,7 +13,7 @@ struct TestAppSecondViewModel
     Label l1;
     Label l2;
     Label labels[3];
-    uint8_t current_label = 0;
+    uint8_t current_label;
     TestAppSecondViewCallback callback;
     void *context;
 };

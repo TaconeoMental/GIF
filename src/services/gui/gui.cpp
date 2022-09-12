@@ -18,9 +18,13 @@ static void gui_handle_input(Gui *gui, InputKey key)
         return;
     }
 
+    // TODO: Hacer esto una función
     OgfApplication *current_app = gui->app_manager->current_app;
+    OgfApplicationEvent event;
+    event.type = OgfApplicationEventTypeInput;
+    event.data.key = key;
 
-    BaseType_t xStatus = xQueueSendToBack(current_app->event_queue, &key, portMAX_DELAY);
+    BaseType_t xStatus = xQueueSendToBack(current_app->event_queue, &event, portMAX_DELAY);
     if (xStatus != pdPASS)
     {
         MLOG_W("Could not send %d to the queue", key);
@@ -30,10 +34,11 @@ static void gui_handle_input(Gui *gui, InputKey key)
 static void gui_redraw(Gui *gui)
 {
     assert_ptr(gui);
+    display_clear(gui->display);
     OgfApplication *current_app = gui->app_manager->current_app;
 
     //OgfApplicationView *view = current_app->views[current_app->current_view_id]->view;
-    OgfApplicationView *view = ogf_indexed_views_get_current(&current_app->views);
+    OgfApplicationView *view = ogf_indexed_views_get_current(current_app->indexed_views);
     // OgfApplication *view = ogf_application_get_current_view(current_app);
 
     Widget *widget = view->frame->widget;

@@ -11,7 +11,7 @@ OgfApplication *ogf_application_alloc()
     OgfApplication *app = (OgfApplication *) pvPortMalloc(sizeof(OgfApplication));
     app->gui = (Gui *) ogf_resource_open("gui");
     app->event_queue = xQueueCreate(5, sizeof(OgfApplicationEvent));
-    ogf_indexed_views_init(&app->views);
+    app->indexed_views = ogf_indexed_views_alloc();
     return app;
 }
 
@@ -52,21 +52,30 @@ void ogf_application_add_view(OgfApplication *app, uint8_t view_id, OgfApplicati
 {
     assert_ptr(app);
     assert_ptr(view);
-    ogf_indexed_views_add_view(&app->views, view_id, view);
+    ogf_indexed_views_add_view(app->indexed_views, view_id, view);
+}
+
+static OgfApplicationView *ogf_application_get_current_view(OgfApplication *app)
+{
+    assert_ptr(app);
+    OgfApplicationView *curr_view = ogf_indexed_views_get_current(app->indexed_views);
+    assert_ptr(curr_view);
+    return curr_view;
 }
 
 static void ogf_application_on_enter(OgfApplication *app)
 {
+    MLOG_T("APP ON_ENTER");
     assert_ptr(app);
-    OgfApplicationView *curr_view = ogf_indexed_views_get_current(&app->views);
-    assert_ptr(curr_view);
+
+    OgfApplicationView *curr_view = ogf_application_get_current_view(app);
     curr_view->handlers.on_enter_handler(app);
 }
 
-void ogf_application_next_view(OgfApplication *app, uint16_t view_id)
+void ogf_application_next_view(OgfApplication *app, uint8_t view_id)
 {
     assert_ptr(app);
-    ogf_indexed_views_set_current_id(&app->views, view_id);
+    ogf_indexed_views_set_current_id(app->indexed_views, view_id);
     ogf_application_on_enter(app);
 }
 
@@ -80,10 +89,21 @@ void ogf_application_start(OgfApplication *app)
     while (1)
     {
         if (xQueueReceive(app->event_queue,
-                          &event,
-                          portMAX_DELAY) == pdPASS)
+                    &event,
+                    portMAX_DELAY) == pdPASS)
         {
-            MLOG_D("TODO");
+            OgfApplicationView *curr_view = ogf_indexed_views_get_current(app->indexed_views);
+            assert_ptr(curr_view);
+            MLOG_D("Event received TYPE=%d", event.type);
+            if (event.type == OgfApplicationEventTypeInput)
+            {
+                MLOG_T("WAS INPUT EVENT");
+                curr_view->event_handler(curr_view->context, event.data.key);
+            } else
+            {
+                curr_view->handlers.on_event_handler(app, event);
+            }
+            ogf_application_request_draw(app);
         }
     }
 }
