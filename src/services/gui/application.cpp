@@ -8,7 +8,7 @@
 
 OgfApplication *ogf_application_alloc()
 {
-    OgfApplication *app = (OgfApplication *) pvPortMalloc(sizeof(OgfApplication));
+    OgfApplication *app = SIMPLE_ALLOC(OgfApplication);
     app->gui = (Gui *) ogf_resource_open("gui");
     app->event_queue = xQueueCreate(5, sizeof(OgfApplicationEvent));
     app->indexed_views = ogf_indexed_views_alloc();
@@ -37,6 +37,7 @@ void ogf_application_request_draw(OgfApplication *app)
 void ogf_application_send_custom_event(OgfApplication *app, uint8_t event)
 {
     assert_ptr(app);
+    MLOG_T("SENDING CUSTOM EVENT");
     OgfApplicationEvent app_event;
     app_event.type = OgfApplicationEventTypeCustom;
     app_event.data.custom_event = event;
@@ -58,18 +59,14 @@ void ogf_application_add_view(OgfApplication *app, uint8_t view_id, OgfApplicati
 static OgfApplicationView *ogf_application_get_current_view(OgfApplication *app)
 {
     assert_ptr(app);
-    OgfApplicationView *curr_view = ogf_indexed_views_get_current(app->indexed_views);
-    assert_ptr(curr_view);
-    return curr_view;
+    return ogf_indexed_views_get_current(app->indexed_views);
 }
 
 static void ogf_application_on_enter(OgfApplication *app)
 {
-    MLOG_T("APP ON_ENTER");
     assert_ptr(app);
-
     OgfApplicationView *curr_view = ogf_application_get_current_view(app);
-    curr_view->handlers.on_enter_handler(app);
+    curr_view->handlers.on_enter_handler(app->context);
 }
 
 void ogf_application_next_view(OgfApplication *app, uint8_t view_id)

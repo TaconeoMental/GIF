@@ -14,8 +14,8 @@ struct TestAppSecondViewModel
     Label l2;
     Label labels[3];
     uint8_t current_label;
+    void *context; // TODO: Renombrar a "callback_context"
     TestAppSecondViewCallback callback;
-    void *context;
 };
 
 struct TestAppSecondView
@@ -25,9 +25,9 @@ struct TestAppSecondView
 };
 
 TestAppSecondView *test_app_second_view_alloc();
-TestAppSecondViewModel *test_app_second_view_get_model(TestAppSecondView *view);
-OgfApplicationView *test_app_second_view_get_view(TestAppSecondView *view);
-
+void test_app_second_view_callback(TestAppEvent event, void *context);
+void test_app_second_view_handler(void *context, InputKey key);
+void test_app_second_view_set_callback(TestAppSecondView *view, TestAppSecondViewCallback callback, void *context);
 extern const ViewHandlers test_app_second_view_handlers;
 
 #endif

@@ -31,7 +31,7 @@ static Input *input_alloc()
 static bool acceptable_analog_value(uint16_t read_a_value, uint16_t a_value)
 {
     return (read_a_value >= a_value - ANALOG_VALUE_MARGIN) &&
-           (read_a_value <= a_value + ANALOG_VALUE_MARGIN);
+        (read_a_value <= a_value + ANALOG_VALUE_MARGIN);
 }
 
 void input_service(void *pvParams)

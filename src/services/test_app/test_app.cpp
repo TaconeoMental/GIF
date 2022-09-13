@@ -11,15 +11,15 @@
 
 TestApp *test_app_alloc()
 {
-    TestApp *test_app = (TestApp *) pvPortMalloc(sizeof(TestApp));
+    TestApp *test_app = SIMPLE_ALLOC(TestApp);
     test_app->app = ogf_application_alloc();
     ogf_application_set_context(test_app->app, test_app);
-
     test_app->second_view = test_app_second_view_alloc();
     ogf_application_add_view(
         test_app->app,
         TestAppViewSecond,
-        test_app_second_view_get_view(test_app->second_view));
+        test_app->second_view->view);
+        //test_app_second_view_get_view(test_app->second_view));
     ogf_application_next_view(test_app->app, TestAppViewSecond);
     ogf_application_attach_to_gui(test_app->app);
     return test_app;

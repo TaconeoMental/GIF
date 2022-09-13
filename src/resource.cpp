@@ -7,7 +7,7 @@ OgfResources *resources_g;
 
 OgfResources *ogf_resources_alloc()
 {
-    OgfResources *resources = (OgfResources *) pvPortMalloc(sizeof(OgfResources));
+    OgfResources *resources = SIMPLE_ALLOC(OgfResources);
     resources->resource_array = (OgfResource *) pvPortMalloc(MAX_RESOURCE_COUNT * sizeof(OgfResource));
     resources->resource_count = 0;
     return resources;

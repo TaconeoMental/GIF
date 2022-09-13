@@ -7,12 +7,11 @@
 
 struct TestApp;
 
-void test_app_second_view_handler(void *context, InputKey key);
-
 TestAppSecondView *test_app_second_view_alloc()
 {
     TestAppSecondView *app_view = SIMPLE_ALLOC(TestAppSecondView);
     TestAppSecondViewModel *model = SIMPLE_ALLOC(TestAppSecondViewModel);
+    app_view->model = model;
 
     app_view->view = ogf_application_view_alloc();
     Frame *main_frame = frame_alloc();
@@ -49,26 +48,14 @@ TestAppSecondView *test_app_second_view_alloc()
     ogf_application_view_set_frame(app_view->view, main_frame);
     ogf_application_view_set_context(app_view->view, model);
 
-    MLOG_T("FINISHED INIT");
     return app_view;
-}
-
-TestAppSecondViewModel *test_app_second_view_get_model(TestAppSecondView *view)
-{
-    assert_ptr(view);
-    return view->model;
-}
-
-OgfApplicationView *test_app_second_view_get_view(TestAppSecondView *view)
-{
-    assert_ptr(view);
-    return view->view;
 }
 
 void test_app_second_view_set_callback(TestAppSecondView *view, TestAppSecondViewCallback callback, void *context)
 {
     assert_ptr(context);
-    TestAppSecondViewModel *model = test_app_second_view_get_model(view);
+    assert_ptr(callback);
+    TestAppSecondViewModel *model = view->model;
     model->callback = callback;
     model->context = context;
 }
@@ -76,6 +63,7 @@ void test_app_second_view_set_callback(TestAppSecondView *view, TestAppSecondVie
 void test_app_second_view_callback(TestAppEvent event, void *context)
 {
     assert_ptr(context);
+    MLOG_T("*SECOND VIEW CALLBACK*");
     TestApp *app = (TestApp *) context;
 
     if (event != TestAppSecondEventOpenMain)
@@ -83,7 +71,6 @@ void test_app_second_view_callback(TestAppEvent event, void *context)
         MLOG_E("Unknown event Id=%d", event);
         return;
     }
-    MLOG_W("SENDING CUSTOM EVENT");
     ogf_application_send_custom_event(app->app, event);
 }
 
@@ -96,12 +83,12 @@ void test_app_second_view_handler(void *context, InputKey key)
     switch (key)
     {
         case InputKeyRight:
-            model->current_label = (model->current_label + 1) % 3;
+            model->current_label = (or_label + 1) % 3;
             label_set_fill(&model->labels[model->current_label], true);
             label_set_fill(&model->labels[or_label], false);
             break;
         case InputKeyLeft:
-            model->current_label = (model->current_label - 1) % 3;
+            model->current_label =  or_label == 0 ? 2 : (or_label - 1) % 3;
             label_set_fill(&model->labels[model->current_label], true);
             label_set_fill(&model->labels[or_label], false);
             break;
@@ -115,8 +102,7 @@ void test_app_second_view_on_enter(void *context)
 {
     assert_ptr(context);
     TestApp *app = (TestApp *) context;
-    TestAppSecondView *second_view = app->second_view;
-    test_app_second_view_set_callback(second_view, test_app_second_view_callback, app);
+    test_app_second_view_set_callback(app->second_view, test_app_second_view_callback, app);
 }
 
 void test_app_second_view_on_event(void *context, OgfApplicationEvent event)
