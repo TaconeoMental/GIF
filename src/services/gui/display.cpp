@@ -69,6 +69,8 @@ void display_set_frame(Display *display, DisplayFrame frame)
 
 void display_commit(Display *display)
 {
+    assert_ptr(display);
+    MLOG_D("COMMIT");
     u8g2p(display).sendBuffer();
 }
 
@@ -83,7 +85,8 @@ void display_reset(Display *display)
 
 void display_clear(Display *display)
 {
-    u8g2p(display).clear();
+    //u8g2p(display).clear();
+    u8g2p(display).clearBuffer();
 }
 
 uint8_t display_get_frame_width(Display *display)

@@ -37,7 +37,7 @@ static void gui_redraw(Gui *gui)
     display_clear(gui->display);
     GifApplication *current_app = gui->app_manager->current_app;
 
-    //GifApplicationView *view = current_app->views[current_app->current_view_id]->view;
+    // GifApplicationView *view = current_app->views[current_app->current_view_id]->view;
     GifApplicationView *view = gif_indexed_views_get_current(current_app->indexed_views);
     // GifApplication *view = gif_application_get_current_view(current_app);
 
