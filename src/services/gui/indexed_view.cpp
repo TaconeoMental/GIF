@@ -2,7 +2,7 @@
 
 #include "common.h"
 
-IndexedViews *ogf_indexed_views_alloc()
+IndexedViews *gif_indexed_views_alloc()
 {
     IndexedViews *indexed_views = SIMPLE_ALLOC(IndexedViews);
     indexed_views->current_view_id = 0;
@@ -10,7 +10,7 @@ IndexedViews *ogf_indexed_views_alloc()
     return indexed_views;
 }
 
-void ogf_indexed_views_add_view(IndexedViews *views, uint8_t id, OgfApplicationView *view)
+void gif_indexed_views_add_view(IndexedViews *views, uint8_t id, GifApplicationView *view)
 {
     assert_ptr(views);
     assert_c(id >= 0);
@@ -21,7 +21,7 @@ void ogf_indexed_views_add_view(IndexedViews *views, uint8_t id, OgfApplicationV
    entry->id = id;
 }
 
-OgfApplicationView *ogf_indexed_views_get_view(IndexedViews *views, uint8_t id)
+GifApplicationView *gif_indexed_views_get_view(IndexedViews *views, uint8_t id)
 {
     assert_ptr(views);
     assert_c(id >= 0);
@@ -37,7 +37,7 @@ OgfApplicationView *ogf_indexed_views_get_view(IndexedViews *views, uint8_t id)
     }
 }
 
-void ogf_indexed_views_set_current_id(IndexedViews *views, uint8_t id)
+void gif_indexed_views_set_current_id(IndexedViews *views, uint8_t id)
 {
     assert_ptr(views);
     assert_c(id >= 0);
@@ -45,8 +45,8 @@ void ogf_indexed_views_set_current_id(IndexedViews *views, uint8_t id)
     views->current_view_id = id;
 }
 
-OgfApplicationView *ogf_indexed_views_get_current(IndexedViews *views)
+GifApplicationView *gif_indexed_views_get_current(IndexedViews *views)
 {
     assert_ptr(views);
-    return ogf_indexed_views_get_view(views, views->current_view_id);
+    return gif_indexed_views_get_view(views, views->current_view_id);
 }

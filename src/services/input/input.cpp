@@ -9,19 +9,19 @@
 #include "resource.h"
 #include "services/gui/gui.h"
 
-const InputButton OGF_BUTTONS[] =
+const InputButton GIF_BUTTONS[] =
 {
     {InputKeyLeft, 0, "LEFT"},
     {InputKeyOk, 260, "OK"},
     {InputKeyRight, 640, "RIGHT"},
 };
-const uint8_t OGF_BUTTON_COUNT = COUNT_OF(OGF_BUTTONS);
+const uint8_t GIF_BUTTON_COUNT = COUNT_OF(GIF_BUTTONS);
 
 static Input *input_alloc()
 {
     Input *input = (Input *) pvPortMalloc(sizeof(Input));
-    input->buttons = (InputButton *) pvPortMalloc(sizeof(OGF_BUTTONS));
-    memcpy(input->buttons, OGF_BUTTONS, sizeof(OGF_BUTTONS));
+    input->buttons = (InputButton *) pvPortMalloc(sizeof(GIF_BUTTONS));
+    memcpy(input->buttons, GIF_BUTTONS, sizeof(GIF_BUTTONS));
     input->analog_pin = BUTTON_ANALOG_PIN;
     input->event_queue = xQueueCreate(5, sizeof(InputKey));
     return input;
@@ -37,9 +37,9 @@ static bool acceptable_analog_value(uint16_t read_a_value, uint16_t a_value)
 void input_service(void *pvParams)
 {
     Input *input = input_alloc();
-    ogf_resource_create("input", input);
+    gif_resource_create("input", input);
 
-    Gui *gui = (Gui *) ogf_resource_open("gui");
+    Gui *gui = (Gui *) gif_resource_open("gui");
 
     uint16_t analog_value;
     InputButton button;
@@ -53,7 +53,7 @@ void input_service(void *pvParams)
         analog_value = analogRead(input->analog_pin);
 
         found = false;
-        for (uint8_t i = 0; i < OGF_BUTTON_COUNT; i++)
+        for (uint8_t i = 0; i < GIF_BUTTON_COUNT; i++)
         {
             button = input->buttons[i];
             if (acceptable_analog_value(analog_value, button.analog_value))

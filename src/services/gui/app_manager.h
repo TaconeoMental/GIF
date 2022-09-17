@@ -9,14 +9,13 @@
 
 struct ApplicationManager
 {
-    OgfApplication **apps;
+    GifApplication **apps;
     uint8_t app_count;
 
-    OgfApplication *current_app;
+    GifApplication *current_app;
 };
 
 ApplicationManager *application_manager_alloc();
-void application_manager_add_application(ApplicationManager *app_manager,
-                                         OgfApplication *app);
+void application_manager_add_application(ApplicationManager *app_manager, GifApplication *app);
 
 #endif

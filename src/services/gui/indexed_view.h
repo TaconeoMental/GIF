@@ -1,15 +1,15 @@
-#ifndef OGF_INDEXED_VIEW_H
-#define OGF_INDEXED_VIEW_H
+#ifndef GIF_INDEXED_VIEW_H
+#define GIF_INDEXED_VIEW_H
 
 #include "common.h"
 
-struct OgfApplicationView;
+struct GifApplicationView;
 
 #define MAX_VIEW_COUNT 10
 
 struct IndexedViewEntry
 {
-    OgfApplicationView *view;
+    GifApplicationView *view;
     uint8_t id;
 };
 
@@ -20,10 +20,10 @@ struct IndexedViews
     uint8_t view_count;
 };
 
-IndexedViews *ogf_indexed_views_alloc();
-void ogf_indexed_views_add_view(IndexedViews *views, uint8_t id, OgfApplicationView *view);
-OgfApplicationView *ogf_indexed_views_get_view(IndexedViews *views, uint8_t id);
-void ogf_indexed_views_set_current_id(IndexedViews *views, uint8_t id);
-OgfApplicationView *ogf_indexed_views_get_current(IndexedViews *views);
+IndexedViews *gif_indexed_views_alloc();
+void gif_indexed_views_add_view(IndexedViews *views, uint8_t id, GifApplicationView *view);
+GifApplicationView *gif_indexed_views_get_view(IndexedViews *views, uint8_t id);
+void gif_indexed_views_set_current_id(IndexedViews *views, uint8_t id);
+GifApplicationView *gif_indexed_views_get_current(IndexedViews *views);
 
 #endif

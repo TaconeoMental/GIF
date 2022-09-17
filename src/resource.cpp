@@ -3,17 +3,17 @@
 #include <string.h>
 #include "common.h"
 
-OgfResources *resources_g;
+GifResources *resources_g;
 
-OgfResources *ogf_resources_alloc()
+GifResources *gif_resources_alloc()
 {
-    OgfResources *resources = SIMPLE_ALLOC(OgfResources);
-    resources->resource_array = (OgfResource *) pvPortMalloc(MAX_RESOURCE_COUNT * sizeof(OgfResource));
+    GifResources *resources = SIMPLE_ALLOC(GifResources);
+    resources->resource_array = (GifResource *) pvPortMalloc(MAX_RESOURCE_COUNT * sizeof(GifResource));
     resources->resource_count = 0;
     return resources;
 }
 
-void ogf_resource_create(const char *name, void *data)
+void gif_resource_create(const char *name, void *data)
 {
     assert_ptr(resources_g);
     assert_c(strlen(name) < MAX_RESOURCE_NAME_LENGTH);
@@ -23,7 +23,7 @@ void ogf_resource_create(const char *name, void *data)
         MLOG_E("Can not add shared resource '%s'!", name);
         return;
     }
-    OgfResource *res = &resources_g->resource_array[resources_g->resource_count++];
+    GifResource *res = &resources_g->resource_array[resources_g->resource_count++];
 
     // Alocamos y copiamos el nombre
     res->name = (char *) pvPortMalloc(MAX_RESOURCE_NAME_LENGTH + 1);
@@ -38,14 +38,14 @@ void ogf_resource_create(const char *name, void *data)
 
 // Creo que es el medio trucherío dividir un task en 2, pero funciona súper así
 // que ñeee
-void *ogf_resource_open(const char *name)
+void *gif_resource_open(const char *name)
 {
-    OgfResource *resource;
+    GifResource *resource;
     while (1)
     {
         for (uint8_t i = 0; i < resources_g->resource_count; i++)
         {
-            OgfResource *resource = &resources_g->resource_array[i];
+            GifResource *resource = &resources_g->resource_array[i];
             if (strcmp(name, resource->name) == 0)
             {
                 // El recurso buscado existe!

@@ -2,7 +2,7 @@
 
 #include "common.h"
 #include "services/gui/view.h"
-#include "services/test_app/test_app.h"
+#include "applications/test_app/test_app.h"
 
 TestAppMainView *test_app_main_view_alloc()
 {
@@ -10,20 +10,20 @@ TestAppMainView *test_app_main_view_alloc()
     TestAppMainViewModel *model = SIMPLE_ALLOC(TestAppMainViewModel);
     main_view->model = model;
 
-    main_view->view = ogf_application_view_alloc();
+    main_view->view = gif_application_view_alloc();
     Frame *main_frame = frame_alloc();
 
     frame_init_grid(main_frame, 2, 2);
 
     label_init(&model->title, "EJEMPLO!");
     label_init(&model->title2, ":D!");
-    label_grid(&model->title, main_frame, 0, 1, OGF_NO_PADDING);
-    label_grid(&model->title2, main_frame, 1, 0, OGF_NO_PADDING);
+    label_grid(&model->title, main_frame, 0, 1, GIF_NO_PADDING);
+    label_grid(&model->title2, main_frame, 1, 0, GIF_NO_PADDING);
 
-    ogf_application_view_set_event_handler(main_view->view, test_app_main_view_handler);
-    ogf_application_view_set_handlers(main_view->view, test_app_main_view_handlers);
-    ogf_application_view_set_frame(main_view->view, main_frame);
-    ogf_application_view_set_context(main_view->view, model);
+    gif_application_view_set_event_handler(main_view->view, test_app_main_view_handler);
+    gif_application_view_set_handlers(main_view->view, test_app_main_view_handlers);
+    gif_application_view_set_frame(main_view->view, main_frame);
+    gif_application_view_set_context(main_view->view, model);
 
     return main_view;
 }
@@ -38,7 +38,7 @@ void test_app_main_view_callback(TestAppEvent event, void *context)
         MLOG_E("Unknown event Id=%d", event);
         return;
     }
-    ogf_application_send_custom_event(app->app, event);
+    gif_application_send_custom_event(app->app, event);
 }
 
 void test_app_main_view_handler(void *context, InputKey key)
@@ -68,12 +68,12 @@ void test_app_main_view_on_enter(void *context)
     test_app_main_view_set_callback(app->main_view, test_app_main_view_callback, app);
 }
 
-void test_app_main_view_on_event(void *context, OgfApplicationEvent event)
+void test_app_main_view_on_event(void *context, GifApplicationEvent event)
 {
     assert_ptr(context);
     TestApp *app = (TestApp *) context;
     TestAppMainView *main_view = app->main_view;
-    if (event.type == OgfApplicationEventTypeInput)
+    if (event.type == GifApplicationEventTypeInput)
     {
         return;
     }
@@ -81,7 +81,7 @@ void test_app_main_view_on_event(void *context, OgfApplicationEvent event)
     switch (event.data.custom_event)
     {
         case TestAppMainEventOpenSecond:
-            ogf_application_next_view(app->app, TestAppViewSecond);
+            gif_application_next_view(app->app, TestAppViewSecond);
             break;
         default:
             MLOG_D("Non actionable event received");

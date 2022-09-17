@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "common.h"
 #include "services/gui/view.h"
-#include "services/test_app/test_app.h"
+#include "applications/test_app/test_app.h"
 
 TestAppSecondView *test_app_second_view_alloc()
 {
@@ -11,7 +11,7 @@ TestAppSecondView *test_app_second_view_alloc()
     TestAppSecondViewModel *model = SIMPLE_ALLOC(TestAppSecondViewModel);
     app_view->model = model;
 
-    app_view->view = ogf_application_view_alloc();
+    app_view->view = gif_application_view_alloc();
     Frame *main_frame = frame_alloc();
 
     // TODO: meter todo esto en view_alloc
@@ -32,7 +32,7 @@ TestAppSecondView *test_app_second_view_alloc()
         sprintf(num_s, "%d", i + 1);
         label_init(curr_label, num_s);
         label_set_round_border(curr_label, true);
-        label_grid(curr_label, bottom_frame, i, 0, OGF_NO_PADDING);
+        label_grid(curr_label, bottom_frame, i, 0, GIF_NO_PADDING);
     }
     label_set_fill(&model->labels[0], true);
 
@@ -41,10 +41,10 @@ TestAppSecondView *test_app_second_view_alloc()
 
     model->current_label = 0;
 
-    ogf_application_view_set_event_handler(app_view->view, test_app_second_view_handler);
-    ogf_application_view_set_handlers(app_view->view, test_app_second_view_handlers);
-    ogf_application_view_set_frame(app_view->view, main_frame);
-    ogf_application_view_set_context(app_view->view, model);
+    gif_application_view_set_event_handler(app_view->view, test_app_second_view_handler);
+    gif_application_view_set_handlers(app_view->view, test_app_second_view_handlers);
+    gif_application_view_set_frame(app_view->view, main_frame);
+    gif_application_view_set_context(app_view->view, model);
 
     return app_view;
 }
@@ -68,7 +68,7 @@ void test_app_second_view_callback(TestAppEvent event, void *context)
         MLOG_E("Unknown event Id=%d", event);
         return;
     }
-    ogf_application_send_custom_event(app->app, event);
+    gif_application_send_custom_event(app->app, event);
 }
 
 void test_app_second_view_handler(void *context, InputKey key)
@@ -102,12 +102,12 @@ void test_app_second_view_on_enter(void *context)
     test_app_second_view_set_callback(app->second_view, test_app_second_view_callback, app);
 }
 
-void test_app_second_view_on_event(void *context, OgfApplicationEvent event)
+void test_app_second_view_on_event(void *context, GifApplicationEvent event)
 {
     assert_ptr(context);
     TestApp *app = (TestApp *) context;
     TestAppSecondView *second_view = app->second_view;
-    if (event.type == OgfApplicationEventTypeInput)
+    if (event.type == GifApplicationEventTypeInput)
     {
         MLOG_T("RECEIVED INPUT EVENT");
         return;
@@ -116,7 +116,7 @@ void test_app_second_view_on_event(void *context, OgfApplicationEvent event)
     switch (event.data.custom_event)
     {
         case TestAppSecondEventOpenMain:
-            ogf_application_next_view(app->app, TestAppViewMain);
+            gif_application_next_view(app->app, TestAppViewMain);
             MLOG_D("OPENMAINEVENT");
             break;
         default:

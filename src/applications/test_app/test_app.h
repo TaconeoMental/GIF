@@ -7,7 +7,7 @@
 
 struct TestApp
 {
-    OgfApplication *app;
+    GifApplication *app;
     TestAppSecondView *second_view;
     TestAppMainView *main_view;
 };

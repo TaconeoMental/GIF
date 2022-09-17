@@ -23,8 +23,8 @@ const GuiService GuiApplications[] =
     {test_app_service, "Test App", 2048, 1}
 };
 
-const uint8_t OGF_SERVICE_COUNT = COUNT_OF(GuiServices);
-const uint8_t OGF_APPLICATION_COUNT = COUNT_OF(GuiApplications);
+const uint8_t GIF_SERVICE_COUNT = COUNT_OF(GuiServices);
+const uint8_t GIF_APPLICATION_COUNT = COUNT_OF(GuiApplications);
 
 void gui_service_start(const GuiService *service)
 {
@@ -38,11 +38,11 @@ void gui_service_start(const GuiService *service)
 
 void services_start()
 {
-    resources_g = ogf_resources_alloc();
+    resources_g = gif_resources_alloc();
 
     MLOG_I("Starting services");
     GuiService service;
-    for (uint8_t i = 0; i < OGF_SERVICE_COUNT; ++i)
+    for (uint8_t i = 0; i < GIF_SERVICE_COUNT; ++i)
     {
         service = GuiServices[i];
 

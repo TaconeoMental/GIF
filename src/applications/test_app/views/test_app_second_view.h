@@ -20,7 +20,7 @@ struct TestAppSecondViewModel
 
 struct TestAppSecondView
 {
-    OgfApplicationView *view;
+    GifApplicationView *view;
     TestAppSecondViewModel *model;
 };
 

@@ -8,15 +8,15 @@
 #include "services/gui/indexed_view.h"
 #include "services/gui/view.h"
 
-enum OgfApplicationEventType
+enum GifApplicationEventType
 {
-    OgfApplicationEventTypeInput,
-    OgfApplicationEventTypeCustom
+    GifApplicationEventTypeInput,
+    GifApplicationEventTypeCustom
 };
 
-struct OgfApplicationEvent
+struct GifApplicationEvent
 {
-    OgfApplicationEventType type;
+    GifApplicationEventType type;
     union
     {
         InputKey key;
@@ -27,7 +27,7 @@ struct OgfApplicationEvent
 // Dependencias circulares? Perdón, no las conozco B)
 struct Gui;
 
-struct OgfApplication
+struct GifApplication
 {
     Gui *gui;
     QueueHandle_t event_queue;
@@ -35,16 +35,16 @@ struct OgfApplication
     IndexedViews *indexed_views;
 };
 
-OgfApplication *ogf_application_alloc();
-void ogf_application_start(OgfApplication *app);
-void ogf_application_set_context(OgfApplication *app, void *context);
-void ogf_application_attach_to_gui(OgfApplication *app);
-void ogf_application_request_draw(OgfApplication *app);
-void ogf_application_send_custom_event(OgfApplication *app, uint8_t event);
+GifApplication *gif_application_alloc();
+void gif_application_start(GifApplication *app);
+void gif_application_set_context(GifApplication *app, void *context);
+void gif_application_attach_to_gui(GifApplication *app);
+void gif_application_request_draw(GifApplication *app);
+void gif_application_send_custom_event(GifApplication *app, uint8_t event);
 
 // View
-void ogf_application_add_view(OgfApplication *app, uint8_t view_id, OgfApplicationView *view);
-void ogf_application_set_view(OgfApplication *app, uint8_t view_id);
-void ogf_application_next_view(OgfApplication *app, uint8_t view_id);
+void gif_application_add_view(GifApplication *app, uint8_t view_id, GifApplicationView *view);
+void gif_application_set_view(GifApplication *app, uint8_t view_id);
+void gif_application_next_view(GifApplication *app, uint8_t view_id);
 
 #endif

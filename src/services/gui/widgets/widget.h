@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include "services/gui/display.h"
 
-#define OGF_PADDING(x) x,x
-#define OGF_NO_PADDING OGF_PADDING(0)
+#define GIF_PADDING(x) x,x
+#define GIF_NO_PADDING GIF_PADDING(0)
 
 // FD pq soy un desordenado
 struct Widget;

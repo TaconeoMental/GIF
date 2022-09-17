@@ -1,16 +1,16 @@
-#ifndef OGF_COMMON_H
-#define OGF_COMMON_H
+#ifndef GIF_COMMON_H
+#define GIF_COMMON_H
 
 #include <inttypes.h>
 #include "mini_log.h"
 
 // Semver
-#define OGF_PATCH_LEVEL 0
-#define OGF_MINOR_VERSION 1
-#define OGF_MAJOR_VERSION 0
+#define GIF_PATCH_LEVEL 0
+#define GIF_MINOR_VERSION 1
+#define GIF_MAJOR_VERSION 0
 
-#define OGF_SEMVER_STRING\
-    STR(OGF_MAJOR_VERSION) "." STR(OGF_MINOR_VERSION) "." STR(OGF_PATCH_LEVEL)
+#define GIF_SEMVER_STRING\
+    STR(GIF_MAJOR_VERSION) "." STR(GIF_MINOR_VERSION) "." STR(GIF_PATCH_LEVEL)
 
 // Transforma a A en un literal str sin expandirlo antes
 #define STRNX(A) #A

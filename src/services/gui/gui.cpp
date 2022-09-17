@@ -19,9 +19,9 @@ static void gui_handle_input(Gui *gui, InputKey key)
     }
 
     // TODO: Hacer esto una función
-    OgfApplication *current_app = gui->app_manager->current_app;
-    OgfApplicationEvent event;
-    event.type = OgfApplicationEventTypeInput;
+    GifApplication *current_app = gui->app_manager->current_app;
+    GifApplicationEvent event;
+    event.type = GifApplicationEventTypeInput;
     event.data.key = key;
 
     BaseType_t xStatus = xQueueSendToBack(current_app->event_queue, &event, portMAX_DELAY);
@@ -35,11 +35,11 @@ static void gui_redraw(Gui *gui)
 {
     assert_ptr(gui);
     display_clear(gui->display);
-    OgfApplication *current_app = gui->app_manager->current_app;
+    GifApplication *current_app = gui->app_manager->current_app;
 
-    //OgfApplicationView *view = current_app->views[current_app->current_view_id]->view;
-    OgfApplicationView *view = ogf_indexed_views_get_current(current_app->indexed_views);
-    // OgfApplication *view = ogf_application_get_current_view(current_app);
+    //GifApplicationView *view = current_app->views[current_app->current_view_id]->view;
+    GifApplicationView *view = gif_indexed_views_get_current(current_app->indexed_views);
+    // GifApplication *view = gif_application_get_current_view(current_app);
 
     Widget *widget = view->frame->widget;
     assert_ptr(widget);
@@ -68,9 +68,9 @@ static Gui *gui_alloc()
 void gui_service(void *pvParams)
 {
     Gui *gui = gui_alloc();
-    ogf_resource_create("gui", gui);
+    gif_resource_create("gui", gui);
 
-    Input *input = (Input *) ogf_resource_open("input");
+    Input *input = (Input *) gif_resource_open("input");
 
     EventBits_t xEventGroupValue;
     while (1)

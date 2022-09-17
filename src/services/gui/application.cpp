@@ -5,39 +5,39 @@
 #include "common.h"
 #include "services/gui/gui.h"
 
-OgfApplication *ogf_application_alloc()
+GifApplication *gif_application_alloc()
 {
-    OgfApplication *app = SIMPLE_ALLOC(OgfApplication);
-    app->gui = (Gui *) ogf_resource_open("gui");
-    app->event_queue = xQueueCreate(5, sizeof(OgfApplicationEvent));
-    app->indexed_views = ogf_indexed_views_alloc();
+    GifApplication *app = SIMPLE_ALLOC(GifApplication);
+    app->gui = (Gui *) gif_resource_open("gui");
+    app->event_queue = xQueueCreate(5, sizeof(GifApplicationEvent));
+    app->indexed_views = gif_indexed_views_alloc();
     return app;
 }
 
-void ogf_application_set_context(OgfApplication *app, void *context)
+void gif_application_set_context(GifApplication *app, void *context)
 {
     assert_ptr(app);
     assert_ptr(context);
     app->context = context;
 }
 
-void ogf_application_attach_to_gui(OgfApplication *app)
+void gif_application_attach_to_gui(GifApplication *app)
 {
     assert_ptr(app);
     application_manager_add_application(app->gui->app_manager, app);
 }
 
-void ogf_application_request_draw(OgfApplication *app)
+void gif_application_request_draw(GifApplication *app)
 {
     assert_ptr(app);
     xEventGroupSetBits(app->gui->flags_event_group, GUI_FLAG_DRAW);
 }
 
-void ogf_application_send_custom_event(OgfApplication *app, uint8_t event)
+void gif_application_send_custom_event(GifApplication *app, uint8_t event)
 {
     assert_ptr(app);
-    OgfApplicationEvent app_event;
-    app_event.type = OgfApplicationEventTypeCustom;
+    GifApplicationEvent app_event;
+    app_event.type = GifApplicationEventTypeCustom;
     app_event.data.custom_event = event;
 
     BaseType_t xStatus = xQueueSendToBack(app->event_queue, &app_event, portMAX_DELAY);
@@ -47,50 +47,50 @@ void ogf_application_send_custom_event(OgfApplication *app, uint8_t event)
     }
 }
 
-void ogf_application_add_view(OgfApplication *app, uint8_t view_id, OgfApplicationView *view)
+void gif_application_add_view(GifApplication *app, uint8_t view_id, GifApplicationView *view)
 {
     assert_ptr(app);
     assert_ptr(view);
-    ogf_indexed_views_add_view(app->indexed_views, view_id, view);
+    gif_indexed_views_add_view(app->indexed_views, view_id, view);
 }
 
-void ogf_application_on_enter(OgfApplication *app)
+void gif_application_on_enter(GifApplication *app)
 {
     assert_ptr(app);
-    OgfApplicationView *curr_view = ogf_indexed_views_get_current(app->indexed_views);
+    GifApplicationView *curr_view = gif_indexed_views_get_current(app->indexed_views);
     curr_view->handlers.on_enter_handler(app->context);
 }
 
-void ogf_application_next_view(OgfApplication *app, uint8_t view_id)
+void gif_application_next_view(GifApplication *app, uint8_t view_id)
 {
     assert_ptr(app);
-    ogf_indexed_views_set_current_id(app->indexed_views, view_id);
-    ogf_application_on_enter(app);
+    gif_indexed_views_set_current_id(app->indexed_views, view_id);
+    gif_application_on_enter(app);
 }
 
-void ogf_application_start(OgfApplication *app)
+void gif_application_start(GifApplication *app)
 {
     assert_ptr(app);
 
-    ogf_application_request_draw(app);
+    gif_application_request_draw(app);
     InputKey input_key;
-    OgfApplicationEvent event;
+    GifApplicationEvent event;
     while (1)
     {
         if (xQueueReceive(app->event_queue,
                     &event,
                     portMAX_DELAY) == pdPASS)
         {
-            OgfApplicationView *curr_view = ogf_indexed_views_get_current(app->indexed_views);
+            GifApplicationView *curr_view = gif_indexed_views_get_current(app->indexed_views);
             MLOG_D("Event received TYPE=%d", event.type);
-            if (event.type == OgfApplicationEventTypeInput)
+            if (event.type == GifApplicationEventTypeInput)
             {
                 curr_view->event_handler(curr_view->context, event.data.key);
             } else
             {
                 curr_view->handlers.on_event_handler(app->context, event);
             }
-            ogf_application_request_draw(app);
+            gif_application_request_draw(app);
         }
     }
 }

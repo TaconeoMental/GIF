@@ -5,10 +5,10 @@
 #include "widgets/frame.h"
 #include "application.h"
 
-struct OgfApplicationEvent;
+struct GifApplicationEvent;
 
 typedef void (*ViewInputHandler)(void *context, InputKey key);
-typedef void (*ViewEventHandler)(void *context, OgfApplicationEvent event);
+typedef void (*ViewEventHandler)(void *context, GifApplicationEvent event);
 typedef void (*ViewGenericHandler)(void *context);
 
 struct ViewHandlers
@@ -18,7 +18,7 @@ struct ViewHandlers
     ViewGenericHandler on_exit_handler;
 };
 
-struct OgfApplicationView
+struct GifApplicationView
 {
     Frame *frame;
     ViewInputHandler event_handler;
@@ -26,11 +26,11 @@ struct OgfApplicationView
     void *context;
 };
 
-OgfApplicationView *ogf_application_view_alloc();
-void ogf_application_view_set_frame(OgfApplicationView *view, Frame *frame);
-void ogf_application_view_set_event_handler(OgfApplicationView *view, ViewInputHandler handler);
-void ogf_application_view_set_handlers(OgfApplicationView *view, ViewHandlers handlers);
-void ogf_application_view_set_context(OgfApplicationView *view, void *context);
-void *ogf_application_view_get_model(OgfApplicationView *view);
+GifApplicationView *gif_application_view_alloc();
+void gif_application_view_set_frame(GifApplicationView *view, Frame *frame);
+void gif_application_view_set_event_handler(GifApplicationView *view, ViewInputHandler handler);
+void gif_application_view_set_handlers(GifApplicationView *view, ViewHandlers handlers);
+void gif_application_view_set_context(GifApplicationView *view, void *context);
+void *gif_application_view_get_model(GifApplicationView *view);
 
 #endif

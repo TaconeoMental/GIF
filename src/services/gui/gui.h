@@ -25,7 +25,7 @@ struct Gui
     EventGroupHandle_t flags_event_group;
 };
 
-void gui_add_application(Gui *gui, OgfApplication *app);
+void gui_add_application(Gui *gui, GifApplication *app);
 void gui_request_redraw(Gui *gui);
 
 #endif

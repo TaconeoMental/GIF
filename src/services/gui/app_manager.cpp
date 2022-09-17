@@ -5,13 +5,12 @@
 ApplicationManager *application_manager_alloc()
 {
     ApplicationManager *app_manager = (ApplicationManager *) pvPortMalloc(sizeof(ApplicationManager));
-    app_manager->apps = (OgfApplication **) pvPortMalloc(MAX_APPLICATION_COUNT * sizeof(OgfApplication *));
+    app_manager->apps = (GifApplication **) pvPortMalloc(MAX_APPLICATION_COUNT * sizeof(GifApplication *));
     app_manager->app_count = 0;
     return app_manager;
 }
 
-void application_manager_add_application(ApplicationManager *app_manager,
-                                         OgfApplication *app)
+void application_manager_add_application(ApplicationManager *app_manager, GifApplication *app)
 {
     assert_ptr(app_manager);
     assert_ptr(app);

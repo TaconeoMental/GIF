@@ -47,4 +47,3 @@ enum LoggerVLevel
 #define MLOG_T(fmt, ...) LOG_IF_VALID(LoggerVLevelTrace, "TRACE", fmt, __VA_ARGS__)
 
 #endif
-

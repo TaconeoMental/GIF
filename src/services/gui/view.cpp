@@ -2,39 +2,39 @@
 
 #include "common.h"
 
-OgfApplicationView *ogf_application_view_alloc()
+GifApplicationView *gif_application_view_alloc()
 {
-    OgfApplicationView *view = (OgfApplicationView *) pvPortMalloc(sizeof(OgfApplicationView));
+    GifApplicationView *view = (GifApplicationView *) pvPortMalloc(sizeof(GifApplicationView));
     return view;
 }
 
-void ogf_application_view_set_frame(OgfApplicationView *view, Frame *frame)
+void gif_application_view_set_frame(GifApplicationView *view, Frame *frame)
 {
     assert_ptr(view);
     assert_ptr(frame);
     view->frame = frame;
 }
 
-void ogf_application_view_set_event_handler(OgfApplicationView *view, ViewInputHandler handler)
+void gif_application_view_set_event_handler(GifApplicationView *view, ViewInputHandler handler)
 {
     assert_ptr(view);
     view->event_handler = handler;
 }
 
-void ogf_application_view_set_handlers(OgfApplicationView *view, ViewHandlers handlers)
+void gif_application_view_set_handlers(GifApplicationView *view, ViewHandlers handlers)
 {
     assert_ptr(view);
     view->handlers = handlers;
 }
 
-void ogf_application_view_set_context(OgfApplicationView *view, void *context)
+void gif_application_view_set_context(GifApplicationView *view, void *context)
 {
     assert_ptr(view);
     assert_ptr(context);
     view->context = context;
 }
 
-void *ogf_application_view_get_model(OgfApplicationView *view)
+void *gif_application_view_get_model(GifApplicationView *view)
 {
     assert_ptr(view);
     return view->context;

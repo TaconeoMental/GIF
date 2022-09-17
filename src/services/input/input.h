@@ -1,5 +1,5 @@
-#ifndef OGF_INPUT
-#define OGF_INPUT
+#ifndef GIF_INPUT
+#define GIF_INPUT
 
 #include <inttypes.h>
 
