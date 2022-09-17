@@ -1,9 +1,8 @@
 #include "application.h"
 
+#include "display.h"
 #include "resource.h"
 #include "common.h"
-#include "display.h"
-#include "services/input/input.h"
 #include "services/gui/gui.h"
 
 OgfApplication *ogf_application_alloc()
@@ -37,7 +36,6 @@ void ogf_application_request_draw(OgfApplication *app)
 void ogf_application_send_custom_event(OgfApplication *app, uint8_t event)
 {
     assert_ptr(app);
-    MLOG_T("SENDING CUSTOM EVENT");
     OgfApplicationEvent app_event;
     app_event.type = OgfApplicationEventTypeCustom;
     app_event.data.custom_event = event;
@@ -56,16 +54,10 @@ void ogf_application_add_view(OgfApplication *app, uint8_t view_id, OgfApplicati
     ogf_indexed_views_add_view(app->indexed_views, view_id, view);
 }
 
-static OgfApplicationView *ogf_application_get_current_view(OgfApplication *app)
+void ogf_application_on_enter(OgfApplication *app)
 {
     assert_ptr(app);
-    return ogf_indexed_views_get_current(app->indexed_views);
-}
-
-static void ogf_application_on_enter(OgfApplication *app)
-{
-    assert_ptr(app);
-    OgfApplicationView *curr_view = ogf_application_get_current_view(app);
+    OgfApplicationView *curr_view = ogf_indexed_views_get_current(app->indexed_views);
     curr_view->handlers.on_enter_handler(app->context);
 }
 
@@ -90,15 +82,13 @@ void ogf_application_start(OgfApplication *app)
                     portMAX_DELAY) == pdPASS)
         {
             OgfApplicationView *curr_view = ogf_indexed_views_get_current(app->indexed_views);
-            assert_ptr(curr_view);
             MLOG_D("Event received TYPE=%d", event.type);
             if (event.type == OgfApplicationEventTypeInput)
             {
-                MLOG_T("WAS INPUT EVENT");
                 curr_view->event_handler(curr_view->context, event.data.key);
             } else
             {
-                curr_view->handlers.on_event_handler(app, event);
+                curr_view->handlers.on_event_handler(app->context, event);
             }
             ogf_application_request_draw(app);
         }

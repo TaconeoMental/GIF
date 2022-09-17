@@ -7,9 +7,15 @@ struct OgfApplicationView;
 
 #define MAX_VIEW_COUNT 10
 
+struct IndexedViewEntry
+{
+    OgfApplicationView *view;
+    uint8_t id;
+};
+
 struct IndexedViews
 {
-    OgfApplicationView *views[MAX_VIEW_COUNT];
+    IndexedViewEntry entries[MAX_VIEW_COUNT];
     uint8_t current_view_id;
     uint8_t view_count;
 };

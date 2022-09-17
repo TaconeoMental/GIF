@@ -5,8 +5,6 @@
 #include "services/gui/view.h"
 #include "services/test_app/test_app.h"
 
-struct TestApp;
-
 TestAppSecondView *test_app_second_view_alloc()
 {
     TestAppSecondView *app_view = SIMPLE_ALLOC(TestAppSecondView);
@@ -63,7 +61,6 @@ void test_app_second_view_set_callback(TestAppSecondView *view, TestAppSecondVie
 void test_app_second_view_callback(TestAppEvent event, void *context)
 {
     assert_ptr(context);
-    MLOG_T("*SECOND VIEW CALLBACK*");
     TestApp *app = (TestApp *) context;
 
     if (event != TestAppSecondEventOpenMain)
@@ -119,7 +116,7 @@ void test_app_second_view_on_event(void *context, OgfApplicationEvent event)
     switch (event.data.custom_event)
     {
         case TestAppSecondEventOpenMain:
-            //ogf_application_next_view(app, TestAppViewMain);
+            ogf_application_next_view(app->app, TestAppViewMain);
             MLOG_D("OPENMAINEVENT");
             break;
         default:

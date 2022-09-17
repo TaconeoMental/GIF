@@ -1,3 +1,5 @@
+General
+-----------
 - Añadir posibilidad de elegir tipo de input que se va a usar, esto es, si se
   va a usar un solo pin análogo y cada botón entregará un valor particular o si
   se va a usar un pin por botón.
@@ -6,3 +8,9 @@
   funcionando.
 - Ver cómo y cúando llamo a los "free" xd
 - Añadir tipos de InputKey, tipo click, doble click, etc.
+- Hacer un header común para el API de las aplicaciones
+- Hacer macros para la creación de aplicaciones
+
+Widgets
+-----------
+ -Lista seleccionable

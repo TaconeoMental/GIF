@@ -3,12 +3,14 @@
 
 enum TestAppView
 {
+    TestAppViewMain,
     TestAppViewSecond,
     TestAppViewNum
 };
 
 enum TestAppEvent
 {
+    TestAppMainEventOpenSecond,
     TestAppSecondEventOpenMain
 };
 

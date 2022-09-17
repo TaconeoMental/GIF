@@ -15,8 +15,10 @@ void ogf_indexed_views_add_view(IndexedViews *views, uint8_t id, OgfApplicationV
     assert_ptr(views);
     assert_c(id >= 0);
     assert_c(id < MAX_VIEW_COUNT);
-    views->views[id] = view; // XD
-    ++views->view_count;
+
+   IndexedViewEntry *entry = &views->entries[views->view_count++];
+   entry->view = view;
+   entry->id = id;
 }
 
 OgfApplicationView *ogf_indexed_views_get_view(IndexedViews *views, uint8_t id)
@@ -24,9 +26,15 @@ OgfApplicationView *ogf_indexed_views_get_view(IndexedViews *views, uint8_t id)
     assert_ptr(views);
     assert_c(id >= 0);
     assert_c(id < MAX_VIEW_COUNT);
-    OgfApplicationView *view = views->views[id];
-    assert_ptr(view);
-    return view;
+
+    for (uint8_t i = 0; i < MAX_VIEW_COUNT; i++)
+    {
+        IndexedViewEntry entry = views->entries[i];
+        if (entry.id == id)
+        {
+            return entry.view;
+        }
+    }
 }
 
 void ogf_indexed_views_set_current_id(IndexedViews *views, uint8_t id)

@@ -25,6 +25,15 @@ static FrameGridModel *frame_grid_model_alloc(uint8_t columns, uint8_t rows)
     {
         model->widgets[i] = (Widget **) pvPortMalloc(columns * sizeof(Widget *));
     }
+
+    for (uint8_t r = 0; r < model->rows; r++)
+    {
+        for (uint8_t c = 0; c < model->columns; c++)
+        {
+           model->widgets[r][c] = NULL;
+        }
+    }
+
     return model;
 }
 
@@ -51,7 +60,10 @@ void frame_grid_draw_callback(Display *display, Widget *widget)
         for (uint8_t c = 0; c < model->columns; c++)
         {
             curr_widget = model->widgets[r][c];
-            curr_widget->draw_callback(display, curr_widget);
+            if (curr_widget)
+            {
+                curr_widget->draw_callback(display, curr_widget);
+            }
         }
     }
 }
@@ -122,6 +134,7 @@ void frame_init_grid(Frame *frame, uint8_t columns, uint8_t rows)
     assert_ptr(frame);
     frame->frame_type = FRAME_TYPE_GRID;
     frame->grid_model = frame_grid_model_alloc(columns, rows);
+    frame_set_as_main(frame);
     widget_set_context(frame->widget, frame->grid_model);
     widget_set_draw_callback(frame->widget, frame_grid_draw_callback);
 }
