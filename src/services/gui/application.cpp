@@ -59,6 +59,7 @@ void gif_application_on_enter(GifApplication *app)
     assert_ptr(app);
     GifApplicationView *curr_view = gif_indexed_views_get_current(app->indexed_views);
     curr_view->handlers.on_enter_handler(app->context);
+    gif_application_request_draw(app);
 }
 
 void gif_application_next_view(GifApplication *app, uint8_t view_id)
@@ -72,7 +73,6 @@ void gif_application_start(GifApplication *app)
 {
     assert_ptr(app);
 
-    gif_application_request_draw(app);
     InputKey input_key;
     GifApplicationEvent event;
     while (1)
@@ -90,7 +90,6 @@ void gif_application_start(GifApplication *app)
             {
                 curr_view->handlers.on_event_handler(app->context, event);
             }
-            gif_application_request_draw(app);
         }
     }
 }

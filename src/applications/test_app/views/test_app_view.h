@@ -11,7 +11,8 @@ enum TestAppView
 enum TestAppEvent
 {
     TestAppMainEventOpenSecond,
-    TestAppSecondEventOpenMain
+    TestAppSecondEventOpenMain,
+    TestAppSecondEventRedraw
 };
 
 #endif

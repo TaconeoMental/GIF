@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#define LOGGER_VERBOSITY_LEVEL LoggerVLevelTrace
+#define LOGGER_VERBOSITY_LEVEL LoggerVLevelOff
 #define LOGGER_USE_COLOUR
 #define SERIAL_BAUD 9600
 #define LOGGER_F_FUNC printf

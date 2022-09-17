@@ -63,9 +63,9 @@ void test_app_second_view_callback(TestAppEvent event, void *context)
     assert_ptr(context);
     TestApp *app = (TestApp *) context;
 
-    if (event != TestAppSecondEventOpenMain)
+    if (event == TestAppSecondEventRedraw)
     {
-        MLOG_E("Unknown event Id=%d", event);
+        gif_application_request_draw(app->app);
         return;
     }
     gif_application_send_custom_event(app->app, event);
@@ -83,11 +83,13 @@ void test_app_second_view_handler(void *context, InputKey key)
             model->current_label = (or_label + 1) % 3;
             label_set_fill(&model->labels[model->current_label], true);
             label_set_fill(&model->labels[or_label], false);
+            model->callback(TestAppSecondEventRedraw, model->context);
             break;
         case InputKeyLeft:
             model->current_label =  or_label == 0 ? 2 : (or_label - 1) % 3;
             label_set_fill(&model->labels[model->current_label], true);
             label_set_fill(&model->labels[or_label], false);
+            model->callback(TestAppSecondEventRedraw, model->context);
             break;
         case InputKeyOk:
             model->callback(TestAppSecondEventOpenMain, model->context);
