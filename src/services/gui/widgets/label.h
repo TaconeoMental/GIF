@@ -21,12 +21,17 @@ struct Label
     LabelModel *model;
 };
 
-void label_init(Label *label, const char *text);
+void label_init(Label *label);
+void label_init_text(Label *label, const char *text);
 
 // Setters
+void label_set_text(Label *label, const char *text);
 void label_set_border(Label *label, bool b);
 void label_set_round_border(Label *label, bool b);
 void label_set_fill(Label *label, bool b);
+
+// Getters
+char *label_get_string(Label *label);
 
 // Posicionamiento
 void label_grid(Label *label, Frame *frame, uint8_t column, uint8_t row, uint8_t x_p, uint8_t y_p);

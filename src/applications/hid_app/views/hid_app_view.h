@@ -9,7 +9,7 @@ enum HidAppView
 
 enum HidAppEvent
 {
-    TestAppSecondEventRedraw
+    HidAppTemplateEventRedraw
 };
 
 #endif

@@ -14,10 +14,7 @@ TestAppSecondView *test_app_second_view_alloc()
     app_view->view = gif_application_view_alloc();
     Frame *main_frame = frame_alloc();
 
-    // TODO: meter todo esto en view_alloc
-    //frame_set_as_main(app_frame->frame);
-
-    label_init(&model->l1, "Arriba");
+    label_init_text(&model->l1, "Arriba");
     label_set_border(&model->l1, true);
     label_stack(&model->l1, main_frame, FRAME_STACK_UP, FRAME_STACK_FILL_X, 15);
 
@@ -30,13 +27,13 @@ TestAppSecondView *test_app_second_view_alloc()
     {
         Label *curr_label = &model->labels[i];
         sprintf(num_s, "%d", i + 1);
-        label_init(curr_label, num_s);
+        label_init_text(curr_label, num_s);
         label_set_round_border(curr_label, true);
         label_grid(curr_label, bottom_frame, i, 0, GIF_NO_PADDING);
     }
     label_set_fill(&model->labels[0], true);
 
-    label_init(&model->l2, "TEST!");
+    label_init_text(&model->l2, "TEST!");
     label_stack(&model->l2, main_frame, FRAME_STACK_RIGHT, 40, FRAME_STACK_FILL_Y);
 
     model->current_label = 0;

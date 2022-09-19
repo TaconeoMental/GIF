@@ -9,6 +9,7 @@ extern void input_service(void *p);
 extern void gui_service(void *p);
 
 // Aplicaciones
+extern void test_app_service(void *p);
 extern void hid_app_service(void *p);
 
 const GuiService GuiServices[] =
@@ -20,7 +21,8 @@ const GuiService GuiServices[] =
 // Primera aplicación siempre es la primera en ejecutarse
 const GuiService GuiApplications[] =
 {
-    {hid_app_service, "Test App", 2048, 1}
+    {test_app_service, "Test App", 2048, 1},
+    {hid_app_service, "HID App", 2048, 1}
 };
 
 const uint8_t GIF_SERVICE_COUNT = COUNT_OF(GuiServices);

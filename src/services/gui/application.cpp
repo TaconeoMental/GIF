@@ -82,7 +82,7 @@ void gif_application_start(GifApplication *app)
                     portMAX_DELAY) == pdPASS)
         {
             GifApplicationView *curr_view = gif_indexed_views_get_current(app->indexed_views);
-            MLOG_D("Event received TYPE=%d", event.type);
+            MLOG_D("Event received TYPE '%d'", event.type);
             if (event.type == GifApplicationEventTypeInput)
             {
                 curr_view->event_handler(curr_view->context, event.data.key);

@@ -1,6 +1,7 @@
 #include "view.h"
 
 #include "common.h"
+#include "services/gui/gui.h"
 
 GifApplicationView *gif_application_view_alloc()
 {

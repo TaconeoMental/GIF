@@ -63,25 +63,36 @@ void label_draw_callback(Display *display, Widget *widget)
     display_set_frame(display, display_frame);
 }
 
-void label_init(Label *label, const char *text)
+void label_init(Label *label)
 {
     label->widget = widget_alloc();
     widget_set_draw_callback(label->widget, label_draw_callback);
 
     LabelModel *model = SIMPLE_ALLOC(LabelModel);
+    label->model = model;
     model->has_border = false;
     model->has_round_border = false;
     model->has_fill = false;
 
-    // TODO: Generalizar esto con un macro o algo siono
     model->text = (char *) pvPortMalloc(MAX_LABEL_TEXT_LENGTH + 1);
-    strncpy(model->text, text, MAX_LABEL_TEXT_LENGTH + 1);
+    label_set_text(label, "");
 
-    label->model = model;
     widget_set_context(label->widget, model);
 }
 
+void label_init_text(Label *label, const char *text)
+{
+    label_init(label);
+    label_set_text(label, text);
+}
+
 // Setters
+void label_set_text(Label *label, const char *text)
+{
+    assert_ptr(label);
+    strncpy(label->model->text, text, MAX_LABEL_TEXT_LENGTH + 1);
+}
+
 void label_set_border(Label *label, bool b)
 {
     assert_ptr(label);
@@ -98,6 +109,15 @@ void label_set_fill(Label *label, bool b)
 {
     assert_ptr(label);
     label->model->has_fill = b;
+}
+
+// Getters
+char *label_get_string(Label *label)
+{
+    assert_ptr(label);
+
+    // No hay problema con esto porque el arreglo está allocado en el heap
+    return label->model->text;
 }
 
 // Posicionamiento

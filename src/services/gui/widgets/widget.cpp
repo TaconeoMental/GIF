@@ -20,3 +20,11 @@ void widget_set_context(Widget *widget, void *context)
     assert_ptr(context);
     widget->context = context;
 }
+
+void widget_inherit_shape(Widget *child, Widget *parent)
+{
+    child->x = parent->x;
+    child->y = parent->y;
+    child->width = parent->width;
+    child->height = parent->height;
+}

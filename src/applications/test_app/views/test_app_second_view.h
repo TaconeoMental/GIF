@@ -14,6 +14,7 @@ struct TestAppSecondViewModel
     Label l2;
     Label labels[3];
     uint8_t current_label;
+    uint8_t total_count;
     void *context; // TODO: Renombrar a "callback_context"
     TestAppSecondViewCallback callback;
 };

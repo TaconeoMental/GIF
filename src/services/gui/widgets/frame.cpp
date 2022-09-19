@@ -3,6 +3,16 @@
 #include "common.h"
 #include "services/gui/gui.h"
 
+// Pequeño helper
+static void frame_set_as_main(Frame *frame)
+{
+    assert_ptr(frame);
+    frame->widget->width = GUI_DISPLAY_WIDTH;
+    frame->widget->height = GUI_DISPLAY_HEIGHT;
+    frame->widget->x = 0;
+    frame->widget->y = 0;
+}
+
 // Init de cada FrameType
 static FrameStackModel *frame_stack_model_alloc()
 {
@@ -30,7 +40,7 @@ static FrameGridModel *frame_grid_model_alloc(uint8_t columns, uint8_t rows)
     {
         for (uint8_t c = 0; c < model->columns; c++)
         {
-           model->widgets[r][c] = NULL;
+            model->widgets[r][c] = NULL;
         }
     }
 
@@ -49,9 +59,9 @@ void frame_grid_draw_callback(Display *display, Widget *widget)
     if (model->has_border)
     {
         display_draw_frame(display, widget->x,
-                                    widget->y,
-                                    widget->width,
-                                    widget->height);
+                widget->y,
+                widget->width,
+                widget->height);
     }
 
     Widget *curr_widget;
@@ -78,9 +88,9 @@ void frame_stack_draw_callback(Display *display, Widget *widget)
     if (model->has_border)
     {
         display_draw_frame(display, widget->x,
-                                    widget->y,
-                                    widget->width,
-                                    widget->height);
+                widget->y,
+                widget->width,
+                widget->height);
     }
 
     Widget *curr_widget;
@@ -180,10 +190,10 @@ void frame_grid_widget(Frame *frame, Widget *widget, uint8_t column, uint8_t row
 
     widget->width = relative_block_length(frame->widget->width - 2 * border_pixel, frame->grid_model->columns, column) - 2 * x_p;
     widget->x = frame->widget->x + x_p + border_pixel
-                + relative_block_start(frame->widget->width - 2 * border_pixel, frame->grid_model->columns, column);
+        + relative_block_start(frame->widget->width - 2 * border_pixel, frame->grid_model->columns, column);
     widget->height = relative_block_length(frame->widget->height - 2 * border_pixel, frame->grid_model->rows, row) - 2 * y_p;
     widget->y = frame->widget->y + y_p + border_pixel
-                + relative_block_start(frame->widget->height - 2 * border_pixel, frame->grid_model->rows, row);
+        + relative_block_start(frame->widget->height - 2 * border_pixel, frame->grid_model->rows, row);
 
     frame->grid_model->widgets[row][column] = widget;
 }
@@ -193,6 +203,21 @@ void frame_grid(Frame *frame, Frame *parent_frame, uint8_t column, uint8_t row, 
     assert_ptr(frame);
     assert_ptr(parent_frame);
     assert_c(parent_frame->frame_type == FRAME_TYPE_GRID);
+    if (frame->frame_type == FRAME_TYPE_STACK)
+    {
+        FrameGridModel *grid_model = parent_frame->grid_model;
+        uint8_t difference = relative_block_start(parent_frame->widget->height,
+                                                  grid_model->rows,
+                                                  row);
+        uint8_t row_height = relative_block_length(parent_frame->widget->height,
+                                                   grid_model->rows,
+                                                   row);
+        Widget *widget = parent_frame->widget;
+        frame->stack_model->available_frame = {widget->x,
+                                               widget->y + difference,
+                                               widget->width,
+                                               row_height};
+    }
     frame_grid_widget(parent_frame, frame->widget, column, row, x_p, y_p);
 }
 
@@ -247,13 +272,4 @@ void frame_stack(Frame *frame, Frame *parent_frame, FrameStackDirection stack_di
 void widget_print_info(Widget *widget)
 {
     MLOG_W("P(%d, %d, %d, %d)", widget->x, widget->y, widget->width, widget->height);
-}
-
-void frame_set_as_main(Frame *frame)
-{
-    assert_ptr(frame);
-    frame->widget->width = GUI_DISPLAY_WIDTH;
-    frame->widget->height = GUI_DISPLAY_HEIGHT;
-    frame->widget->x = 0;
-    frame->widget->y = 0;
 }

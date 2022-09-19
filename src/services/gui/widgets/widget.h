@@ -27,5 +27,6 @@ struct Widget
 Widget *widget_alloc();
 void widget_set_draw_callback(Widget *widget, WidgetDrawCallback callback);
 void widget_set_context(Widget *widget, void *context);
+void widget_inherit_shape(Widget *child, Widget *parent);
 
 #endif

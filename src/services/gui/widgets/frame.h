@@ -53,7 +53,6 @@ struct Frame
 Frame *frame_alloc();
 void frame_set_border(Frame *frame, bool b);
 bool frame_has_border(Frame *frame);
-void frame_set_as_main(Frame *frame);
 
 // Funciones para tipo Grid
 void frame_init_grid(Frame *frame, uint8_t columns, uint8_t rows);

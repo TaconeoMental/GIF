@@ -15,8 +15,8 @@ TestAppMainView *test_app_main_view_alloc()
 
     frame_init_grid(main_frame, 2, 2);
 
-    label_init(&model->title, "EJEMPLO!");
-    label_init(&model->title2, ":D!");
+    label_init_text(&model->title, "EJEMPLO!");
+    label_init_text(&model->title2, ":D!");
     label_grid(&model->title, main_frame, 0, 1, GIF_NO_PADDING);
     label_grid(&model->title2, main_frame, 1, 0, GIF_NO_PADDING);
 

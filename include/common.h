@@ -45,6 +45,6 @@
     } while(0)
 
 #define assert_c(condition) _assert(condition, "Assert error: '" STRNX(condition) "'")
-#define assert_ptr(ptr) _assert(ptr != NULL, "'" STRNX(ptr) "' is a null pointer!")
+#define assert_ptr(ptr) _assert(ptr, "'" STRNX(ptr) "' is a null pointer!")
 
 #endif
