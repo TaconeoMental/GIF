@@ -1,0 +1,205 @@
+#!/usr/bin/env python3
+
+import argparse
+import os
+from os.path import join as P
+import shutil
+import json
+import tomli_w
+import toml
+import subprocess
+import re
+
+GIF_SOURCE_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+GIF_ROOT_FILE = ".gifapp"
+SOURCE_CODE_DIR_PATH = P(GIF_SOURCE_DIR_PATH, "source")
+APPLICATIONS_DIR_NAME = "applications"
+APPLICATIONS_DIR_PATH = P(SOURCE_CODE_DIR_PATH, APPLICATIONS_DIR_NAME)
+
+CONFIG_DIR_PATH = P(GIF_SOURCE_DIR_PATH, "config")
+TEMPLATE_DIR_PATH = P(CONFIG_DIR_PATH, "template")
+TEMPLATE_VIEWS_DIR_PATH = P(CONFIG_DIR_PATH, "template_views")
+TEMPLATE_BASE_DIR_PATH = P(CONFIG_DIR_PATH, "base")
+
+PIO_BINARY_PATH = "~/.platformio/penv/bin/platformio"
+
+def preprocess_file(src, dst, pairs, include_dirs=None, defines=None):
+    if not include_dirs:
+        include_dirs = ["."]
+    if not defines:
+        defines = {}
+    with open(src, "rt") as f:
+        src_content = f.read()
+    re_string = r"(?:\n|^)(\s*#\s*(?:include|pragma)\s+.*)"
+    includes = re.findall(re_string, src_content)
+    #code = re.sub(re_string, "", src_content)
+    gcc_command = ["gcc", "-w",
+                   *[f"-I{i}" for i in include_dirs],
+                   *["-D{}={}".format(*e) for e in defines.items()],
+                   "-E",
+                   src]
+    print(" ".join(gcc_command))
+    gcc_out = subprocess.check_output(gcc_command, encoding='UTF-8')
+    gcc_out = re.sub(r"(?:\n|^)\s*#.*", "", gcc_out)
+    gcc_out = re.sub(r"^\s*\n", "", gcc_out) # Maña mía
+    if not os.path.exists(os.path.dirname(dst)):
+        os.makedirs(os.path.dirname(dst))
+    with open(dst, "w") as f:
+        f.writelines(template_s(f"{l}\n", pairs) for l in includes)
+        f.write(gcc_out)
+
+
+def is_in_gif():
+    return os.path.exists(P(os.getcwd(), GIF_ROOT_FILE))
+
+def template_s(template, pairs):
+    for match, replace in pairs.items():
+        for i in range(template.count(match)):
+            modifier = template[template.index(match) + len(match) + 1]
+            rep = replace
+            if modifier == "l":
+                rep = replace.lower()
+            elif modifier == "u":
+                rep = replace.upper()
+            elif modifier == "t":
+                rep = replace.title()
+            template = template.replace(f"{match}_{modifier}", rep)
+    return template
+
+def app_basename(name):
+    if name.endswith("app"):
+        return name
+    return f"{name.lower()}_app"
+
+def verify_pio():
+    pass
+
+def gif_init_project(path):
+    abspath = os.path.abspath(path)
+    relpath = os.path.relpath(path)
+    try:
+        shutil.copytree(SOURCE_CODE_DIR_PATH, abspath, ignore=shutil.ignore_patterns(APPLICATIONS_DIR_NAME))
+    except FileExistsError:
+        print(f"Error: Directory '{relpath}' already exists")
+        return
+    open(P(abspath, GIF_ROOT_FILE), 'a').close()
+    print(f"Succesfully created GIF project at '{relpath}'")
+
+
+def gif_add_app(name, raw):
+    if not is_in_gif():
+        print("Error: Not a GIF project directory")
+        return
+    if raw:
+        print("Error: '--raw' not yet implemented")
+        return
+    app_name = app_basename(name)
+    app_abspath = P(os.getcwd(), APPLICATIONS_DIR_NAME, app_name)
+    if os.path.exists(app_abspath):
+        print(f"Error: Application '{name}' already exists")
+        return
+    os.makedirs(app_abspath)
+
+    first_view = "Main"
+    mr_pairs = {"fv": first_view, "app_name": name}
+    json_template = '{"application":{"name":"app_name_t","first_view":"fv_t","views":{"fv_l":{"requires":[]}}}}'
+    json_s = json.loads(template_s(json_template, mr_pairs))
+    #print(json.dumps(json_s))
+    with open(P(app_abspath, "config.toml"), "wb") as t:
+        tomli_w.dump(json_s, t)
+
+    for file in os.listdir(TEMPLATE_BASE_DIR_PATH):
+        new_fn = template_s(file, {"app_view": first_view})
+        shutil.copy(P(TEMPLATE_BASE_DIR_PATH, file),
+                    P(app_abspath, new_fn))
+
+def gif_generate_source():
+    if not is_in_gif():
+        print("Error: Not a GIF project directory")
+        return
+    apps_abspath = P(os.getcwd(), APPLICATIONS_DIR_NAME)
+    headers_gif = P(CONFIG_DIR_PATH, "headers")
+    headers_cwd = P(apps_abspath, "headers")
+
+    app_dirs = os.listdir(apps_abspath)
+    for directory in app_dirs:
+        with open(P(apps_abspath, directory, "config.toml"), "rt") as t:
+            toml_parsed = toml.loads(t.read())
+        views = list(toml_parsed["application"]["views"].keys())
+        views_t = [v.title() for v in views]
+
+        views_alt_t_l = [None]*(len(views) + len(views_t))
+        views_alt_t_l[0::2] = views_t
+        views_alt_t_l[1::2] = views
+
+        app_name = directory[:-4] # HACK pero ñe
+        pairs = {
+            "app_name": app_name,
+            "views_all": ",".join(views),
+            "view_first": toml_parsed["application"]["first_view"],
+            "views_alt": ",".join(views_alt_t_l)
+        }
+
+        # Generamos el header especial
+        app_src_dir = P(apps_abspath, directory, "src")
+        if not os.path.exists(app_src_dir):
+            os.mkdir(app_src_dir)
+        with open(P(CONFIG_DIR_PATH, "special.h"), "rt") as f:
+            special_src = f.readlines()
+        with open(P(app_src_dir, "special.h"), "w") as f:
+            for line in special_src:
+                f.write(template_s(line, pairs))
+
+        # Copiamos los archivos preprocesados
+        for curr_path, dirs, files in os.walk(TEMPLATE_DIR_PATH):
+            for file in files:
+                dir_name = os.path.basename(curr_path)
+                or_path = P(curr_path, file)
+                if dir_name == "template":
+                    dst = P(app_src_dir, file)
+                else:
+                    dst = P(app_src_dir, os.path.basename(curr_path), file)
+                for v in views:
+                    dst_f = template_s(dst, {"app_name": app_name, "view_name": v})
+                    preprocess_file(or_path, dst_f, pairs, include_dirs=[
+                        P(GIF_SOURCE_DIR_PATH, "config", "headers"),
+                        P(apps_abspath, directory, "src"),
+                        P(apps_abspath, directory)],
+                                    defines={
+                                        "VIEW_NAME_T": v.title(),
+                                        "VIEW_NAME_L": v.lower()
+                                    })
+
+
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(dest="action")
+
+    parser_init = subparsers.add_parser("gen", help="Generate source code")
+    parser_init = subparsers.add_parser("compile", help="Compile source code")
+    parser_init = subparsers.add_parser("upload", help="Upload firmware")
+
+    parser_init = subparsers.add_parser("init", help="Initialize a new GIF project")
+    parser_init.add_argument("directory")
+
+    parser_new = subparsers.add_parser("new", help="Create a new application core")
+    parser_new.add_argument("name")
+    parser_new.add_argument("-r", "--raw", action="store_true", help="Don't use autogenerated code")
+
+    parsed_args = parser.parse_args()
+
+    action = parsed_args.action
+    if action == "init":
+        gif_init_project(parsed_args.directory)
+    elif action == "new":
+        gif_add_app(parsed_args.name, parsed_args.raw)
+    elif action == "gen":
+        gif_generate_source()
+    else:
+        parser.print_help()
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,16 @@
+[application]
+name = "Test"
+first_view = "Main"
+
+[[views]]
+name = "Main"
+requires = [
+    "Label",
+    "ListSelector"
+]
+
+[[views]]
+name = "Second"
+requires = [
+    "Label"
+]

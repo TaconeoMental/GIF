@@ -13,4 +13,4 @@ General
 
 Widgets
 -----------
- -Lista seleccionable
+- Barra de carga
